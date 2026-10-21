@@ -51,6 +51,12 @@ Setup Harmage Antigravity Improvement Pack, integrasikan Hermes3D office NPC aga
    - Diimplementasikan pipeline perakitan, audio ducking, subtitle, dan master rendering (`harmage/creator/longform_pipeline.py`).
    - Terintegrasi dengan CEO Approval Gate (`approval_requests`) dan studio interaktif di `frontend/src/views/DivisionsView.tsx`.
    - Lolos pengujian otomatis 100% dengan bukti video riil 1920x1080 (16:9), durasi 47.0 detik, ukuran 2.21 MB.
+8. **Unified Git Repository & Secret-Clean Remote Setup:**
+   - Memutus nested submodules Git (`hermes-3d/.git` dan `hermes-agent/.git`).
+   - Menginisialisasi single root repository di `E:\AI Agent`.
+   - Mengonfigurasi `.gitignore` untuk mengecualikan build output, caches, token `.env`, dan upstream unit tests/evals (`hermes-agent/tests/`, `hermes-agent/evals/`) yang berisi mock dummy secrets.
+   - Sanitasi 3 dummy fixtures yang sempat memicu deteksi GitHub Secret Scanning.
+   - Commit bersih (`af22e634`) dengan 13.862 file terdaftar dan berhasil di-push secara terverifikasi ke `https://github.com/genthaandikaa/AI-AGENT.git` branch `main`.
 
 ## Changed Files
 - `E:\AI Agent\.agents\rules\harmage-workflow.md`
