@@ -8,8 +8,10 @@ Guarded by the Shared AI Token Budget Manager (2,000,000 tokens/day in Asia/Jaka
 covering both Qwen and Gemini models.
 """
 
+import os
 import json
 import urllib.request
+import urllib.error
 import subprocess
 from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional
@@ -23,19 +25,27 @@ from harmage.token_budget import (
     MODE_CEILING_REACHED
 )
 
+def _load_env_key() -> str:
+    val = os.environ.get("XKIRO_API_KEY", "")
+    if not val:
+        env_path = os.path.join(os.path.dirname(__file__), "..", ".env")
+        if os.path.exists(env_path):
+            try:
+                with open(env_path, "r", encoding="utf-8") as f:
+                    for line in f:
+                        if line.startswith("XKIRO_API_KEY="):
+                            val = line.strip().split("=", 1)[1].strip("\"' ")
+                            break
+            except Exception:
+                pass
+    return val
+
 XKIRO_URL = "https://api.xkiro.com/v1/chat/completions"
-XKIRO_KEY = "sk-xt-ae6a4cb89ce3a5a75bea3e2af7d3575c60fd02f66dd69c0e"
+XKIRO_KEY = _load_env_key()
 QWEN_MODELS = [
-    "qwen/qwen3.8-max:free",
     "qwen/qwen3.8-omni-flash:free",
-    "qwen/qwen3.7-max:free",
-    "qwen/qwen3.7-plus:free",
-    "qwen/qwen3.7-flash:free",
-    "qwen/qwen3.6-plus:free",
-    "qwen/qwen3.5-plus:free",
-    "qwen/qwen3-coder-plus:free",
-    "qwen/qwen3-max:free",
-    "qwen/qwen-plus-2025-07-28:free",
+    "qwen/qwen3.8-max:free",
+    "google/gemini-2.5-flash:free",
 ]
 PRIMARY_MODEL = QWEN_MODELS[0]
 FALLBACK_MODEL = QWEN_MODELS[1]
@@ -94,7 +104,7 @@ def call_llm_completion(
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {XKIRO_KEY}",
-        "User-Agent": "Mozilla/5.0",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     }
 
     # Model selection based on preferred provider
@@ -112,7 +122,7 @@ def call_llm_completion(
         }
         req = urllib.request.Request(XKIRO_URL, data=json.dumps(payload).encode("utf-8"), headers=headers)
         try:
-            with urllib.request.urlopen(req, timeout=25) as resp:
+            with urllib.request.urlopen(req, timeout=5) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
                 content = data["choices"][0]["message"]["content"]
                 
@@ -137,6 +147,11 @@ def call_llm_completion(
                     fallback_char_count=len(content)
                 )
                 return content
+        except urllib.error.HTTPError as http_err:
+            if http_err.code in (401, 403, 429):
+                # Account-wide rate-limit or auth failure; break fast to avoid hanging
+                break
+            continue
         except Exception:
             continue
 

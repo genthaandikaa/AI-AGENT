@@ -3,18 +3,18 @@
 > Status tugas terkini dan langkah berikutnya untuk handoff & kontinuitas kerja.
 
 ## Current Objective
-Setup Harmage Antigravity Improvement Pack, integrasikan Hermes3D office NPC agar aktif bekerja sesuai role tanpa freeze di latar belakang, dan selesaikan Token Budget Manager UI & verifikasi.
+Setup Harmage Antigravity Improvement Pack, integrasikan Hermes3D office NPC agar aktif bekerja sesuai role tanpa freeze di latar belakang, dan bangun Autonomous AI NPC Complex Brain dengan kecerdasan dinamis tanpa hardcode.
 
 ## Verified Starting State
 - **Workspace Root:** `E:\AI Agent`
-- **Installed Skills:** `graphify-workflow`, `project-memory`, `skill-auditor`, `verify-before-done` (terpasang di `.agents/skills` dan global `~/.gemini/config/skills`).
+- **Installed Skills:** `graphify-workflow`, `project-memory`, `skill-auditor`, `verify-before-done`, `harmage-hermes-runtime` (terpasang di `.agents/skills` dan global `~/.gemini/config/skills`).
 - **Graphify CLI:** `graphify 0.9.58` terverifikasi.
 - **Daemons Running:**
-  - Port 5173: Frontend Vite Dashboard (Task 2435, PID 23024)
-  - Port 9200: Harmage FastAPI Backend Server (Task 2711, PID 16704)
-  - Port 3000: Hermes3D Office Next.js (Task 2433, PID 22940)
-  - Port 18789: Hermes3D Gateway Adapter (Task 2776, PID 8860)
-  - Telegram Gateway: Hermes Agent CLI Gateway Run (Task 2791, Connected to Telegram polling mode)
+  - Port 5173: Frontend Vite Dashboard (Task-3298, PID 20092)
+  - Port 9200: Harmage FastAPI Backend Server (Task-4551, PID 17584)
+  - Port 3000: Hermes3D Office Next.js (Task-4183, PID 16124)
+  - Port 18789: Hermes3D Gateway Adapter (Task-4555)
+  - Telegram Gateway: Hermes Agent CLI Gateway Run (Task-3760, Connected)
 
 ## Completed
 1. **Harmage Antigravity Improvement Pack:**
@@ -54,47 +54,49 @@ Setup Harmage Antigravity Improvement Pack, integrasikan Hermes3D office NPC aga
 8. **Unified Git Repository & Secret-Clean Remote Setup:**
    - Memutus nested submodules Git (`hermes-3d/.git` dan `hermes-agent/.git`).
    - Menginisialisasi single root repository di `E:\AI Agent`.
-   - Mengonfigurasi `.gitignore` untuk mengecualikan build output, caches, token `.env`, dan upstream unit tests/evals (`hermes-agent/tests/`, `hermes-agent/evals/`) yang berisi mock dummy secrets.
-   - Sanitasi 3 dummy fixtures yang sempat memicu deteksi GitHub Secret Scanning.
-   - Commit bersih (`af22e634`) dengan 13.862 file terdaftar dan berhasil di-push secara terverifikasi ke `https://github.com/genthaandikaa/AI-AGENT.git` branch `main`.
+   - Mengonfigurasi `.gitignore` untuk mengecualikan build output, caches, token `.env`, dan upstream unit tests/evals yang berisi mock dummy secrets.
+   - Commit bersih (`af22e634` & `65f066cb`) terdaftar dan berhasil di-push secara terverifikasi ke `https://github.com/genthaandikaa/AI-AGENT.git` branch `main`.
 9. **Defensive Fix for Skills Catalog Crash in Hermes3D:**
    - Memperbaiki `TypeError: Cannot read properties of undefined (reading 'trim')` pada `hermes-3d/src/lib/skills/catalog.ts` dan `marketplace.ts`.
    - Mengamankan pemanggilan `.trim()` dengan fallback null-safe `(skill?.skillKey || skill?.name || "").trim()`.
    - Melengkapi schema response `skills.status` pada `server/demo-gateway-adapter.js` dengan `SkillStatusEntry` lengkap (`skillKey`, `source`, `baseDir`, dll).
-   - Terverifikasi 100% bebas crash dengan Playwright headless browser test (`harmage/tests/verify_office_fixed.py`).
 10. **Hermes CLI Model Routing & Telegram Context Overflow Fix:**
     - Mengalihkan primary model di config.yaml ke gemini-2.5-flash dengan provider gemini (terverifikasi aktif dan cepat).
-    - Menghapus conflict ase_url xkiro pada provider gemini (hermes config unset model.base_url).
     - Mereset routing thread #1 Telegram yang sebelumnya macet karena menumpuk 343 pesan (~372.437 token), melepaskan lease yang hang, dan me-restart gateway daemon.
 11. **All 10 Division NPCs Active & Working at Desks:**
-    - Diimplementasikan mapping alias dua arah (NPC_ASSIGNEE_MAP di harmage/server.py dan ASSIGNEE_ALIASES di hermes-3d/server/demo-gateway-adapter.js).
-    - Diseed tugas in_progress untuk ke-10 divisi Harmage di SQLite (TSK-MG-01, TSK-TR-02, TSK-SC-01, TSK-CP-01, TSK-YT-01, TSK-LF-01, TSK-TT-02, TSK-AF-01, TSK-QA-02, TSK-YT-02).
+    - Diimplementasikan mapping alias dua arah (`NPC_ASSIGNEE_MAP` di `harmage/server.py` dan `ASSIGNEE_ALIASES` di `hermes-3d/server/demo-gateway-adapter.js`).
+    - Diseed tugas `in_progress` untuk ke-10 divisi Harmage di SQLite.
     - Seluruh 10 avatar berpindah dari status idle ke working, duduk di meja kerja masing-masing dengan animasi mengetik dan judul tugas yang aktif.
 12. **Permanent No-Demo Hermes Production Runtime & Anti-Timeout:**
-    - Menghapus total mode DEMO dan branding demo adapter; gateway строго beroperasi sebagai `Hermes Enterprise Production Gateway` (`adapterType: "hermes"`).
-    - Pill status di UI 2D dan 3D kini mutlak menampilkan `HERMES • CONNECTED`.
-    - Menyelesaikan bug "kerja cuma 10 detik": mengikat status kerja avatar langsung ke kolom `working` di task board dan memancarkan keep-alive heartbeat tiap 2.5s. Karyawan kini bekerja di meja secara kontinu sampai tugasnya benar-benar selesai (`done`), dan baru santai/istirahat saat tugas beres atau jam rehat.
+    - Menghapus total mode DEMO dan branding demo adapter; gateway beroperasi sebagai `Hermes Enterprise Production Gateway` (`adapterType: "hermes"`).
+    - Pill status di UI 2D dan 3D mutlak menampilkan `HERMES • CONNECTED`.
+    - Menyelesaikan bug "kerja cuma 10 detik": mengikat status kerja avatar langsung ke kolom `working` di task board dan memancarkan keep-alive heartbeat tiap 2.5s. Karyawan bekerja di meja secara kontinu sampai tugasnya benar-benar selesai (`done`), dan baru santai/istirahat saat tugas beres atau jam rehat.
 13. **Autonomous AI NPC Complex Brain & Simulation Engine:**
     - Modul `harmage/npc_brain.py` dengan otak emosi (morale, energy, stress, pikiran saat ini) untuk ke-10 persona Harmage.
     - Sistem jadwal kerja kantor berbasis WIB (Asia/Jakarta): Jam Kerja Pagi, Istirahat Siang, Jam Kerja Siang, Rapat Evaluasi Sore, dan Jam Bebas Malam.
     - Dialog otonom antar-karyawan via event `office.speech` (speech bubble live di atas avatar).
     - Ditancapkan skill permanen `.agents/skills/harmage-hermes-runtime` dan rule workflow workspace.
-    - Terverifikasi lolos 100% dengan Playwright test (HTTP 200, 0 error, durasi observasi >17 detik).
+14. **Purged All Hardcoded Dialogue Pools & Dynamic AI Intelligence:**
+    - Menghapus 100% array statis `dialogue_pool`, `break_dialogue`, dan pasangan statis if-else di `harmage/npc_brain.py`.
+    - Menghubungkan kepribadian dinamis langsung ke `harmage.npc.build_npc_roster()` (soul prompts, tone of voice, personality traits).
+    - Menambahkan persistent memory database di SQLite: tabel `npc_brain_memories` dan `npc_brain_interactions`.
+    - Mengintegrasikan dynamic thought generation dan 2-way inter-agent dialogue synthesis yang merujuk langsung ke task aktual di SQLite (ID & judul tugas riil), waktu Jakarta (WIB), dan token budget live metrics.
+    - Menambahkan circuit breaker dan fail-fast logic untuk mencegah bottleneck jaringan saat free model kena rate-limit (429).
+    - Meningkatkan gateway adapter (`demo-gateway-adapter.js`) untuk memancarkan speech bubbles langsung ke 2D Pixel Office (via `agent` streaming) dan 3D Retro Office (via `office.speech`).
+    - Terverifikasi 100% dengan automated unit tests dan Playwright browser tests.
 
 ## Changed Files
-- E:\AI Agent\harmage\npc_brain.py
-- E:\AI Agent\harmage\server.py
-- E:\AI Agent\hermes-3d\server\demo-gateway-adapter.js
-- E:\AI Agent\hermes-3d\src\features\office\screens\OfficeScreen.tsx
-- E:\AI Agent\hermes-3d\src\features\pixel-office\PixelOffice2D.tsx
-- E:\AI Agent\hermes-3d\src\features\retro-office\RetroOffice3D.tsx
-- E:\AI Agent\.agents\rules\harmage-workflow.md
-- E:\AI Agent\.agents\skills\harmage-hermes-runtime\SKILL.md
-- E:\AI Agent\harmage\tests\verify_office_complex_ai.py
-- E:\AI Agent\PROJECT_MEMORY.md
-- E:\AI Agent\TASK_STATE.md
+- `harmage/npc_brain.py`
+- `harmage/llm_brain.py`
+- `harmage/server.py`
+- `hermes-3d/server/demo-gateway-adapter.js`
+- `harmage/tests/test_npc_brain_dynamic.py`
+- `harmage/tests/verify_live_api.py`
+- `harmage/tests/verify_office_complex_ai.py`
+- `PROJECT_MEMORY.md`
+- `TASK_STATE.md`
 
 ## Next Action
-1. Sapa bot di Telegram (topik mana saja atau DM) — bot sudah bebas dari token deadlock dan langsung membalas via Gemini 2.5 Flash.
-2. Buka http://localhost:3000/office untuk melihat seluruh 10 karyawan virtual Harmage duduk bekerja di mejanya masing-masing.
+1. Buka http://localhost:3000/office untuk melihat seluruh 10 karyawan virtual Harmage duduk bekerja di mejanya dengan speech bubbles dinamis dan pikiran live berbasis tugas riil.
+2. Buka http://127.0.0.1:9200/api/npc/brain/state atau http://127.0.0.1:9200/api/npc/brain/history untuk melihat log interaksi dan monolog batin karyawan yang tersimpan di SQLite.
 3. Buka http://127.0.0.1:5173 untuk memantau sinkronisasi Dashboard Harmage secara live.

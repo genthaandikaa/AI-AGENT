@@ -684,6 +684,40 @@ def get_npc_dialogues() -> List[Dict[str, Any]]:
     return npc_brain_manager.recent_dialogues
 
 
+@app.get("/api/npc/brain/memories")
+def get_npc_memories(agent_id: Optional[str] = None, limit: int = 30) -> List[Dict[str, Any]]:
+    """Retrieve persistent thought and emotional memories from SQLite."""
+    conn = get_connection()
+    conn.row_factory = sqlite3.Row
+    if agent_id:
+        canon = npc_brain_manager._canonical_id(agent_id)
+        rows = conn.execute(
+            "SELECT * FROM npc_brain_memories WHERE agent_id = ? ORDER BY id DESC LIMIT ?",
+            (canon, limit)
+        ).fetchall()
+    else:
+        rows = conn.execute(
+            "SELECT * FROM npc_brain_memories ORDER BY id DESC LIMIT ?",
+            (limit,)
+        ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+@app.get("/api/npc/brain/history")
+def get_npc_interaction_history(limit: int = 30) -> List[Dict[str, Any]]:
+    """Retrieve persistent inter-agent dialogue history from SQLite."""
+    conn = get_connection()
+    conn.row_factory = sqlite3.Row
+    rows = conn.execute(
+        "SELECT * FROM npc_brain_interactions ORDER BY id DESC LIMIT ?",
+        (limit,)
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+
 
 # Mount Static Files
 FRONTEND_DIST = WORKSPACE_DIR / "frontend" / "dist"

@@ -966,11 +966,14 @@ function startAdapter() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({}),
-        signal: AbortSignal.timeout(3000),
+        signal: AbortSignal.timeout(10000),
       });
       if (res.ok) {
         const d = await res.json();
         if (d && d.initiator && d.recipient) {
+          const initKey = sessionKeyFor(d.initiator.id);
+          const recipKey = sessionKeyFor(d.recipient.id);
+
           broadcastEvent({
             type: "event",
             event: "office.speech",
@@ -981,6 +984,17 @@ function startAdapter() {
               timestamp: Date.now(),
             },
           });
+          broadcastEvent({
+            type: "event",
+            event: "agent",
+            payload: {
+              stream: "text",
+              runId: `run-${d.initiator.id}-speech`,
+              sessionKey: initKey,
+              data: { delta: d.initiator.speech },
+            },
+          });
+
           setTimeout(() => {
             broadcastEvent({
               type: "event",
@@ -992,7 +1006,40 @@ function startAdapter() {
                 timestamp: Date.now(),
               },
             });
+            broadcastEvent({
+              type: "event",
+              event: "agent",
+              payload: {
+                stream: "text",
+                runId: `run-${d.recipient.id}-speech`,
+                sessionKey: recipKey,
+                data: { delta: d.recipient.speech },
+              },
+            });
           }, 4000);
+
+          setTimeout(() => {
+            broadcastEvent({
+              type: "event",
+              event: "agent",
+              payload: {
+                stream: "text",
+                runId: `run-${d.initiator.id}-speech`,
+                sessionKey: initKey,
+                data: { delta: "" },
+              },
+            });
+            broadcastEvent({
+              type: "event",
+              event: "agent",
+              payload: {
+                stream: "text",
+                runId: `run-${d.recipient.id}-speech`,
+                sessionKey: recipKey,
+                data: { delta: "" },
+              },
+            });
+          }, 10000);
         }
       }
     } catch {}
