@@ -25,8 +25,20 @@ from harmage.token_budget import (
 
 XKIRO_URL = "https://api.xkiro.com/v1/chat/completions"
 XKIRO_KEY = "sk-xt-ae6a4cb89ce3a5a75bea3e2af7d3575c60fd02f66dd69c0e"
-PRIMARY_MODEL = "qwen/qwen3.8-max:free"
-FALLBACK_MODEL = "qwen/qwen3.8-omni-flash:free"
+QWEN_MODELS = [
+    "qwen/qwen3.8-max:free",
+    "qwen/qwen3.8-omni-flash:free",
+    "qwen/qwen3.7-max:free",
+    "qwen/qwen3.7-plus:free",
+    "qwen/qwen3.7-flash:free",
+    "qwen/qwen3.6-plus:free",
+    "qwen/qwen3.5-plus:free",
+    "qwen/qwen3-coder-plus:free",
+    "qwen/qwen3-max:free",
+    "qwen/qwen-plus-2025-07-28:free",
+]
+PRIMARY_MODEL = QWEN_MODELS[0]
+FALLBACK_MODEL = QWEN_MODELS[1]
 GEMINI_MODEL = "google/gemini-2.5-flash:free"
 
 
@@ -87,9 +99,9 @@ def call_llm_completion(
 
     # Model selection based on preferred provider
     if preferred_provider == "gemini":
-        candidate_models = [GEMINI_MODEL, PRIMARY_MODEL]
+        candidate_models = [GEMINI_MODEL] + QWEN_MODELS
     else:
-        candidate_models = [PRIMARY_MODEL, FALLBACK_MODEL, GEMINI_MODEL]
+        candidate_models = QWEN_MODELS + [GEMINI_MODEL]
 
     for model in candidate_models:
         payload = {
