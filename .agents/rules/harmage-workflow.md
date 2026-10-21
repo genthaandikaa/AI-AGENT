@@ -17,3 +17,4 @@ description: "Persistent workflow for Harmage engineering: reuse project memory,
 - Never claim a tool ran, a test passed, a file was inspected, or an integration works without evidence.
 - Before finishing: inspect the diff, run the narrowest relevant tests, record failures and evidence, and leave the project resumable.
 - Never run destructive commands, overwrite existing memory, change security boundaries, or perform paid/irreversible actions without appropriate authorization.
+- STRICT NO-DEMO POLICY: Never run or revert to demo mode or mock gateway adapters. The office runtime must always connect as Hermes Enterprise Production Gateway (adapterType: 'hermes') with live bidirectional sync to the Harmage Python backend (port 9200) and Hermes3D (port 3000) via port 18789. Agents must stay at their desks working for the full duration of active tasks, and only rest when tasks are completed or during scheduled break times.

@@ -3972,7 +3972,12 @@ export function OfficeScreen({
       }
     >();
     const nextOfficeAgents = state.agents.map((agent) => {
-      const latchedWorking = (workingUntilByAgentId[agent.agentId] ?? 0) > now;
+      const hasWorkingTask = Boolean(
+        taskBoard.cardsByStatus.working?.some(
+          (c) => c.assignedAgentId === agent.agentId
+        )
+      );
+      const latchedWorking = hasWorkingTask || (workingUntilByAgentId[agent.agentId] ?? 0) > now;
       const deskHeld = Boolean(deskHoldByAgentId[agent.agentId]);
       const gymHeld = Boolean(gymHoldByAgentId[agent.agentId]);
       const phoneBoothHeld = Boolean(phoneBoothHoldByAgentId[agent.agentId]);

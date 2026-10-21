@@ -70,14 +70,27 @@ Setup Harmage Antigravity Improvement Pack, integrasikan Hermes3D office NPC aga
     - Diimplementasikan mapping alias dua arah (NPC_ASSIGNEE_MAP di harmage/server.py dan ASSIGNEE_ALIASES di hermes-3d/server/demo-gateway-adapter.js).
     - Diseed tugas in_progress untuk ke-10 divisi Harmage di SQLite (TSK-MG-01, TSK-TR-02, TSK-SC-01, TSK-CP-01, TSK-YT-01, TSK-LF-01, TSK-TT-02, TSK-AF-01, TSK-QA-02, TSK-YT-02).
     - Seluruh 10 avatar berpindah dari status idle ke working, duduk di meja kerja masing-masing dengan animasi mengetik dan judul tugas yang aktif.
-    - Terverifikasi 100% dengan pengujian otomatis Playwright: 0 console/page errors, HTTP 200 OK.
+12. **Permanent No-Demo Hermes Production Runtime & Anti-Timeout:**
+    - Menghapus total mode DEMO dan branding demo adapter; gateway строго beroperasi sebagai `Hermes Enterprise Production Gateway` (`adapterType: "hermes"`).
+    - Pill status di UI 2D dan 3D kini mutlak menampilkan `HERMES • CONNECTED`.
+    - Menyelesaikan bug "kerja cuma 10 detik": mengikat status kerja avatar langsung ke kolom `working` di task board dan memancarkan keep-alive heartbeat tiap 2.5s. Karyawan kini bekerja di meja secara kontinu sampai tugasnya benar-benar selesai (`done`), dan baru santai/istirahat saat tugas beres atau jam rehat.
+13. **Autonomous AI NPC Complex Brain & Simulation Engine:**
+    - Modul `harmage/npc_brain.py` dengan otak emosi (morale, energy, stress, pikiran saat ini) untuk ke-10 persona Harmage.
+    - Sistem jadwal kerja kantor berbasis WIB (Asia/Jakarta): Jam Kerja Pagi, Istirahat Siang, Jam Kerja Siang, Rapat Evaluasi Sore, dan Jam Bebas Malam.
+    - Dialog otonom antar-karyawan via event `office.speech` (speech bubble live di atas avatar).
+    - Ditancapkan skill permanen `.agents/skills/harmage-hermes-runtime` dan rule workflow workspace.
+    - Terverifikasi lolos 100% dengan Playwright test (HTTP 200, 0 error, durasi observasi >17 detik).
 
 ## Changed Files
+- E:\AI Agent\harmage\npc_brain.py
 - E:\AI Agent\harmage\server.py
 - E:\AI Agent\hermes-3d\server\demo-gateway-adapter.js
-- E:\AI Agent\harmage\data\harmage_operations.db
-- E:\AI Agent\harmage\tests\verify_office_working.py
-- E:\AI Agent\harmage\tests\verify_dashboard_working.py
+- E:\AI Agent\hermes-3d\src\features\office\screens\OfficeScreen.tsx
+- E:\AI Agent\hermes-3d\src\features\pixel-office\PixelOffice2D.tsx
+- E:\AI Agent\hermes-3d\src\features\retro-office\RetroOffice3D.tsx
+- E:\AI Agent\.agents\rules\harmage-workflow.md
+- E:\AI Agent\.agents\skills\harmage-hermes-runtime\SKILL.md
+- E:\AI Agent\harmage\tests\verify_office_complex_ai.py
 - E:\AI Agent\PROJECT_MEMORY.md
 - E:\AI Agent\TASK_STATE.md
 

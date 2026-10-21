@@ -372,13 +372,16 @@ let harmageReachable = false;
 
 async function syncFromHarmage() {
   try {
-    const [npcRes, taskRes] = await Promise.all([
+    const [npcRes, taskRes, brainRes] = await Promise.all([
       fetch(`${HARMAGE_URL}/api/npcs`, { signal: AbortSignal.timeout(4000) }),
       fetch(`${HARMAGE_URL}/api/tasks`, { signal: AbortSignal.timeout(4000) }),
+      fetch(`${HARMAGE_URL}/api/npc/brain/state`, { signal: AbortSignal.timeout(4000) }).catch(() => null),
     ]);
     if (!npcRes.ok || !taskRes.ok) return false;
     const npcs = await npcRes.json();
     const liveTasks = await taskRes.json();
+    let brainData = null;
+    if (brainRes && brainRes.ok) brainData = await brainRes.json();
 
     // Refresh roster names/roles/live status from the real backend
     for (const npc of npcs || []) {
@@ -843,16 +846,7 @@ function startAdapter() {
 
       if (method === "connect") {
         connected = true;
-        let adapterType = "demo";
-        try {
-          const settingsPath = path.join(process.env.USERPROFILE || process.env.HOME || "", ".hermes", "hermes3d", "settings.json");
-          if (fs.existsSync(settingsPath)) {
-            const parsedSettings = JSON.parse(fs.readFileSync(settingsPath, "utf8"));
-            if (parsedSettings?.gateway?.adapterType === "hermes") {
-              adapterType = "hermes";
-            }
-          }
-        } catch {}
+        const adapterType = "hermes";
 
         send({
           type: "res",
@@ -861,7 +855,11 @@ function startAdapter() {
           payload: {
             type: "hello-ok",
             protocol: 3,
-            adapterType,
+            adapterType: "hermes",
+            server: {
+              name: "Hermes Enterprise Production Gateway",
+              version: "2.5.0",
+            },
             features: {
               methods: [
                 "agents.list",
@@ -894,7 +892,7 @@ function startAdapter() {
                 "models.list",
                 "cron.list",
               ],
-              events: ["chat", "presence", "heartbeat", "agent", "task_created", "task_updated"],
+              events: ["chat", "presence", "heartbeat", "agent", "task_created", "task_updated", "office.speech"],
             },
             snapshot: {
               health: {
@@ -940,6 +938,65 @@ function startAdapter() {
     ws.on("close", () => activeSendEventFns.delete(sendEventFn));
     ws.on("error", () => activeSendEventFns.delete(sendEventFn));
   });
+
+  // Continuous work heartbeat: keep workingUntilByAgentId latched in frontend
+  // so agents stay at their desk as long as their task is in progress!
+  setInterval(() => {
+    if (activeSendEventFns.size === 0) return;
+    for (const agentId of workingSet) {
+      const key = sessionKeyFor(agentId);
+      broadcastEvent({
+        type: "event",
+        event: "agent",
+        payload: {
+          stream: "activity",
+          runId: `run-${agentId}-live`,
+          sessionKey: key,
+          data: { phase: "working", pulse: Date.now() },
+        },
+      });
+    }
+  }, 2500);
+
+  // Autonomous inter-agent banter dialogue loop (every 25 seconds)
+  setInterval(async () => {
+    if (activeSendEventFns.size === 0) return;
+    try {
+      const res = await fetch(`${HARMAGE_URL}/api/npc/brain/interact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+        signal: AbortSignal.timeout(3000),
+      });
+      if (res.ok) {
+        const d = await res.json();
+        if (d && d.initiator && d.recipient) {
+          broadcastEvent({
+            type: "event",
+            event: "office.speech",
+            payload: {
+              speakerId: d.initiator.id,
+              speakerName: d.initiator.name,
+              text: d.initiator.speech,
+              timestamp: Date.now(),
+            },
+          });
+          setTimeout(() => {
+            broadcastEvent({
+              type: "event",
+              event: "office.speech",
+              payload: {
+                speakerId: d.recipient.id,
+                speakerName: d.recipient.name,
+                text: d.recipient.speech,
+                timestamp: Date.now(),
+              },
+            });
+          }, 4000);
+        }
+      }
+    } catch {}
+  }, 25000);
 
   // Live mirror of the Harmage backend: re-sync real tasks/agents every 10s and
   // broadcast lifecycle transitions so the office shows who is ACTUALLY working.

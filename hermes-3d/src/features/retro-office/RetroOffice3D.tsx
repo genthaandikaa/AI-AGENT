@@ -7652,7 +7652,7 @@ export function RetroOffice3D({
             }`}
             title={`Click to connect or open settings (Runtime: ${activeAdapterType})`}
           >
-            {activeAdapterType} • {gatewayStatus}
+            {(activeAdapterType === "demo" ? "hermes" : activeAdapterType).toUpperCase()} • {gatewayStatus.toUpperCase()}
           </button>
           {/* New Idea 7: Heatmap toggle. */}
           <button

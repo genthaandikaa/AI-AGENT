@@ -91,6 +91,16 @@ class BudgetSimulateRequest(BaseModel):
     agent_id: str = "simulator"
 
 
+class NPCScheduleRequest(BaseModel):
+    period: str
+    duration_minutes: int = 30
+
+
+class NPCInteractRequest(BaseModel):
+    initiator_id: Optional[str] = None
+    recipient_id: Optional[str] = None
+
+
 # --- REST Endpoints ---
 
 @app.get("/api/overview")
@@ -177,7 +187,18 @@ def get_npcs() -> List[Dict[str, Any]]:
             profile.current_task = f"{row['id']}: {row['title']}"
     conn.close()
 
-    return [p.to_dict() for p in roster.values()]
+    results = []
+    for p in roster.values():
+        d = p.to_dict()
+        b = npc_brain_manager.npc_states.get(p.id)
+        if b:
+            d["emotion"] = b.emotion
+            d["morale"] = b.morale
+            d["stress"] = b.stress
+            d["energy"] = b.energy
+            d["current_thought"] = b.current_thought
+        results.append(d)
+    return results
 
 
 @app.get("/api/tasks")
@@ -603,6 +624,64 @@ def simulate_budget_usage(req: BudgetSimulateRequest) -> Dict[str, Any]:
 def reset_budget_window() -> Dict[str, Any]:
     """Reset active window counters (administrative/testing override)."""
     return token_budget_manager.reset_active_window()
+
+
+# --- Autonomous AI NPC Brain & Simulation Endpoints ---
+
+from harmage.npc_brain import npc_brain_manager
+
+
+@app.get("/api/npc/brain/schedule")
+def get_npc_schedule() -> Dict[str, Any]:
+    """Retrieve current office schedule, WIB clock, and active period."""
+    return npc_brain_manager.get_effective_schedule()
+
+
+@app.post("/api/npc/brain/schedule")
+def set_npc_schedule(req: NPCScheduleRequest) -> Dict[str, Any]:
+    """Set manual office period override (e.g. LUNCH_BREAK, MORNING_WORK, STANDUP_MEETING, AUTO_WIB)."""
+    if req.period.upper() in ("AUTO_WIB", "RESET", "CLEAR"):
+        result = npc_brain_manager.clear_schedule_override()
+    else:
+        result = npc_brain_manager.set_schedule_override(req.period, req.duration_minutes)
+    log_activity("INFO", "npc_brain", f"Schedule changed to {result['period']}", result.get("description", ""))
+    return result
+
+
+@app.get("/api/npc/brain/state")
+def get_npc_brain_state() -> Dict[str, Any]:
+    """Retrieve full autonomous emotional, energy, stress, and thought state for all 10 NPCs."""
+    conn = get_connection()
+    conn.row_factory = sqlite3.Row
+    tasks = [dict(r) for r in conn.execute("SELECT id, title, assignee, status FROM tasks").fetchall()]
+    conn.close()
+    states = npc_brain_manager.update_all_npcs(active_tasks=tasks)
+    return {
+        "schedule": npc_brain_manager.get_effective_schedule(),
+        "npcs": states,
+        "recent_dialogues": npc_brain_manager.recent_dialogues[:10]
+    }
+
+
+@app.post("/api/npc/brain/interact")
+def trigger_npc_interaction(req: Optional[NPCInteractRequest] = None) -> Dict[str, Any]:
+    """Trigger realistic autonomous dialogue and interaction between Harmage NPCs."""
+    init_id = req.initiator_id if req else None
+    recip_id = req.recipient_id if req else None
+    dialogue = npc_brain_manager.trigger_interaction(init_id, recip_id)
+    log_activity(
+        "INFO",
+        "npc_brain",
+        f"Dialogue: {dialogue['initiator']['name']} -> {dialogue['recipient']['name']}",
+        f"{dialogue['initiator']['name']}: \"{dialogue['initiator']['speech']}\" | {dialogue['recipient']['name']}: \"{dialogue['recipient']['speech']}\""
+    )
+    return dialogue
+
+
+@app.get("/api/npc/brain/dialogues")
+def get_npc_dialogues() -> List[Dict[str, Any]]:
+    """Retrieve recent autonomous banter and communications between NPCs."""
+    return npc_brain_manager.recent_dialogues
 
 
 

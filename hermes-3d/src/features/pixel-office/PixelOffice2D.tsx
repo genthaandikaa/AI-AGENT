@@ -255,7 +255,7 @@ export function PixelOffice2D(props: PixelOffice2DProps) {
           }`}
           title={`Click to connect or open settings (Runtime: ${activeAdapterType})`}
         >
-          {activeAdapterType} • {gatewayStatus}
+          {(activeAdapterType === "demo" ? "hermes" : activeAdapterType).toUpperCase()} • {gatewayStatus.toUpperCase()}
         </button>
         <button
           onClick={() => onRenderModeChange("3d")}
