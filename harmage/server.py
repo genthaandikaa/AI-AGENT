@@ -141,6 +141,22 @@ def get_overview() -> Dict[str, Any]:
     }
 
 
+NPC_ASSIGNEE_MAP = {
+    "executive_manager": ["executive_manager", "alex_vance"],
+    "treasurer": ["treasurer", "marcus_drake"],
+    "executive_secretary": ["executive_secretary", "secretary", "sophia_chen"],
+    "creator_pm": ["creator_pm", "diana_prince", "diana_pm"],
+    "yt_shorts_specialist": ["yt_shorts_specialist", "leo_sparks", "video_editor", "leo_editor"],
+    "yt_long_specialist": ["yt_long_specialist", "raka_pratama", "editor_longform"],
+    "tiktok_specialist": ["tiktok_specialist", "maya_lin", "scriptwriter", "maya_script"],
+    "tiktok_affiliate": ["tiktok_affiliate", "victor_sterling"],
+    "quality_assurance": ["quality_assurance", "zackary_cross", "qa_sentinel"],
+    "content_researcher": ["content_researcher", "ethan_cole", "researcher"],
+    "quant_specialist": ["quant_specialist", "nova_vance"],
+    "security_specialist": ["security_specialist", "kage_kuro"],
+}
+
+
 @app.get("/api/npcs")
 def get_npcs() -> List[Dict[str, Any]]:
     """Retrieve the full 2D NPC roster with traits, system prompts, and SVG avatars."""
@@ -150,9 +166,11 @@ def get_npcs() -> List[Dict[str, Any]]:
     conn = get_connection()
     conn.row_factory = sqlite3.Row
     for npc_id, profile in roster.items():
+        candidates = NPC_ASSIGNEE_MAP.get(npc_id, [npc_id])
+        placeholders = ",".join("?" for _ in candidates)
         row = conn.execute(
-            "SELECT id, title, status FROM tasks WHERE assignee = ? AND status = 'in_progress' LIMIT 1",
-            (npc_id,)
+            f"SELECT id, title, status FROM tasks WHERE assignee IN ({placeholders}) AND status = 'in_progress' LIMIT 1",
+            candidates
         ).fetchone()
         if row:
             profile.status = NPCStatus.IN_PROGRESS

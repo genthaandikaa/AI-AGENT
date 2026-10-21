@@ -74,7 +74,7 @@ const tasks = [
     id: "kanban:TSK-AF-01",
     title: "Riset 5 Produk Keranjang Kuning Viral Komisi >15%",
     description: "Pilih produk trending TikTok Shop dengan tingkat checkout tertinggi.",
-    status: "inbox",
+    status: "working",
     assignedAgentId: "tiktok_affiliate",
     createdAt: BOOT_ISO,
     updatedAt: BOOT_ISO,
@@ -83,7 +83,7 @@ const tasks = [
     id: "kanban:TSK-QA-01",
     title: "Inspeksi Kualitas Video Pilot Short (Audio & Typography)",
     description: "Periksa kejelasan subtitle, audio sync, dan bebas copyright strike.",
-    status: "done",
+    status: "working",
     assignedAgentId: "qa_sentinel",
     createdAt: BOOT_ISO,
     updatedAt: BOOT_ISO,
@@ -92,7 +92,7 @@ const tasks = [
     id: "kanban:TSK-MG-01",
     title: "Jadwalkan Standup Harian Sore Jam 17:00 WIB",
     description: "Evaluasi pekerjaan selesai hari ini dan kirim laporan ke CEO Gentha.",
-    status: "scheduled",
+    status: "working",
     assignedAgentId: "executive_manager",
     createdAt: BOOT_ISO,
     updatedAt: BOOT_ISO,
@@ -101,7 +101,7 @@ const tasks = [
     id: "kanban:TSK-SC-01",
     title: "Notulensi & Arsip Laporan Rapat Harian Sore",
     description: "Dokumentasikan keputusan rapat dan kirim ringkasan ke Telegram CEO.",
-    status: "scheduled",
+    status: "working",
     assignedAgentId: "secretary",
     createdAt: BOOT_ISO,
     updatedAt: BOOT_ISO,
@@ -110,7 +110,7 @@ const tasks = [
     id: "kanban:TSK-YT-02",
     title: "Riset Materi Video Panjang: Panduan Autonomous AI Office",
     description: "Kumpulkan bahan dan outline video edukasi 16:9 untuk channel YouTube.",
-    status: "inbox",
+    status: "working",
     assignedAgentId: "researcher",
     createdAt: BOOT_ISO,
     updatedAt: BOOT_ISO,
@@ -119,7 +119,7 @@ const tasks = [
     id: "kanban:TSK-LF-01",
     title: "Drafting Timeline Video Panjang YouTube 16:9",
     description: "Susun chapter narasi dan visual b-roll untuk durasi 8-12 menit.",
-    status: "inbox",
+    status: "working",
     assignedAgentId: "editor_longform",
     createdAt: BOOT_ISO,
     updatedAt: BOOT_ISO,
@@ -309,15 +309,15 @@ async function buildDemoReply(agent, message) {
 const HARMAGE_URL = (process.env.HARMAGE_API_URL_OVERRIDE || "http://127.0.0.1:9200").replace(/\/$/, "");
 
 const ASSIGNEE_ALIASES = {
-  maya_lin: "scriptwriter", maya_script: "scriptwriter",
+  maya_lin: "scriptwriter", maya_script: "scriptwriter", tiktok_specialist: "scriptwriter",
   quality_assurance: "qa_sentinel", zackary_cross: "qa_sentinel",
-  leo_sparks: "video_editor", leo_editor: "video_editor",
+  leo_sparks: "video_editor", leo_editor: "video_editor", yt_shorts_specialist: "video_editor",
   victor_sterling: "tiktok_affiliate",
   marcus_drake: "treasurer",
   alex_vance: "executive_manager",
-  sophia_chen: "secretary",
+  sophia_chen: "secretary", executive_secretary: "secretary",
   diana_pm: "creator_pm", diana_prince: "creator_pm",
-  raka_pratama: "editor_longform",
+  raka_pratama: "editor_longform", yt_long_specialist: "editor_longform",
   content_researcher: "researcher", ethan_cole: "researcher",
 };
 
@@ -382,11 +382,13 @@ async function syncFromHarmage() {
 
     // Refresh roster names/roles/live status from the real backend
     for (const npc of npcs || []) {
-      const agent = agents.get(npc.id);
+      const canonicalId = resolveAssignee(npc.id) || npc.id;
+      const agent = agents.get(canonicalId);
       if (!agent) continue;
       if (npc.name) agent.name = npc.name;
       if (npc.role_title) agent.role = npc.role_title;
-      agent.liveStatus = typeof npc.status === "string" ? npc.status : "idle";
+      const statusLower = String(npc.status || "").toLowerCase();
+      agent.liveStatus = (statusLower === "in_progress" || statusLower === "working" || statusLower === "busy") ? "working" : (typeof npc.status === "string" ? npc.status : "idle");
       agent.current_task = npc.current_task || null;
     }
 

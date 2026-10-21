@@ -63,31 +63,25 @@ Setup Harmage Antigravity Improvement Pack, integrasikan Hermes3D office NPC aga
    - Melengkapi schema response `skills.status` pada `server/demo-gateway-adapter.js` dengan `SkillStatusEntry` lengkap (`skillKey`, `source`, `baseDir`, dll).
    - Terverifikasi 100% bebas crash dengan Playwright headless browser test (`harmage/tests/verify_office_fixed.py`).
 10. **Hermes CLI Model Routing & Telegram Context Overflow Fix:**
-   - Mengalihkan primary model di `config.yaml` ke `gemini-2.5-flash` dengan provider `gemini` (terverifikasi aktif dan cepat).
-   - Menghapus conflict `base_url` xkiro pada provider gemini (`hermes config unset model.base_url`).
-   - Mengidentifikasi akar masalah error 429 di Telegram: sesi lama telah mengumpulkan 333 pesan (~372.437 token), melampaui batas input token 250k Google AI Studio Free Tier. Cukup ketik `/new` atau `/reset` di topik Telegram untuk memulai konteks baru yang fresh.
+    - Mengalihkan primary model di config.yaml ke gemini-2.5-flash dengan provider gemini (terverifikasi aktif dan cepat).
+    - Menghapus conflict ase_url xkiro pada provider gemini (hermes config unset model.base_url).
+    - Mereset routing thread #1 Telegram yang sebelumnya macet karena menumpuk 343 pesan (~372.437 token), melepaskan lease yang hang, dan me-restart gateway daemon.
+11. **All 10 Division NPCs Active & Working at Desks:**
+    - Diimplementasikan mapping alias dua arah (NPC_ASSIGNEE_MAP di harmage/server.py dan ASSIGNEE_ALIASES di hermes-3d/server/demo-gateway-adapter.js).
+    - Diseed tugas in_progress untuk ke-10 divisi Harmage di SQLite (TSK-MG-01, TSK-TR-02, TSK-SC-01, TSK-CP-01, TSK-YT-01, TSK-LF-01, TSK-TT-02, TSK-AF-01, TSK-QA-02, TSK-YT-02).
+    - Seluruh 10 avatar berpindah dari status idle ke working, duduk di meja kerja masing-masing dengan animasi mengetik dan judul tugas yang aktif.
+    - Terverifikasi 100% dengan pengujian otomatis Playwright: 0 console/page errors, HTTP 200 OK.
 
 ## Changed Files
-- `E:\AI Agent\.agents\rules\harmage-workflow.md`
-- `E:\AI Agent\.agents\skills\graphify-workflow\SKILL.md`
-- `E:\AI Agent\.agents\skills\project-memory\SKILL.md`
-- `E:\AI Agent\.agents\skills\skill-auditor\SKILL.md`
-- `E:\AI Agent\.agents\skills\verify-before-done\SKILL.md`
-- `E:\AI Agent\PROJECT_MEMORY.md`
-- `E:\AI Agent\TASK_STATE.md`
-- `E:\AI Agent\HARMAGE_IMPLEMENTATION_REPORT.md`
-- `E:\AI Agent\harmage\db.py`
-- `E:\AI Agent\harmage\server.py`
-- `E:\AI Agent\harmage\creator\pipeline.py`
-- `E:\AI Agent\harmage\creator\topic_backlog.py`
-- `E:\AI Agent\harmage\creator\source_ledger.py`
-- `E:\AI Agent\harmage\creator\script_engine.py`
-- `E:\AI Agent\harmage\creator\scene_renderer.py`
-- `E:\AI Agent\harmage\creator\longform_pipeline.py`
-- `E:\AI Agent\harmage\tests\test_longform_pipeline.py`
-- `E:\AI Agent\frontend\src\views\DivisionsView.tsx`
+- E:\AI Agent\harmage\server.py
+- E:\AI Agent\hermes-3d\server\demo-gateway-adapter.js
+- E:\AI Agent\harmage\data\harmage_operations.db
+- E:\AI Agent\harmage\tests\verify_office_working.py
+- E:\AI Agent\harmage\tests\verify_dashboard_working.py
+- E:\AI Agent\PROJECT_MEMORY.md
+- E:\AI Agent\TASK_STATE.md
 
 ## Next Action
-1. Buka `http://127.0.0.1:5173` tab "Divisi" untuk melihat YouTube Long-Form Production Studio (16:9), video player, dan tabel backlog topik.
-2. Review approval request video di tab "Approvals" (`http://127.0.0.1:5173`) untuk governance keputusan publikasi CEO.
-3. Virtual office aktif di `http://localhost:3000/office` dengan 10 NPC Harmage aktif bekerja di meja masing-masing.
+1. Sapa bot di Telegram (topik mana saja atau DM) — bot sudah bebas dari token deadlock dan langsung membalas via Gemini 2.5 Flash.
+2. Buka http://localhost:3000/office untuk melihat seluruh 10 karyawan virtual Harmage duduk bekerja di mejanya masing-masing.
+3. Buka http://127.0.0.1:5173 untuk memantau sinkronisasi Dashboard Harmage secara live.
