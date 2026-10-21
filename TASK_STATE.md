@@ -57,6 +57,15 @@ Setup Harmage Antigravity Improvement Pack, integrasikan Hermes3D office NPC aga
    - Mengonfigurasi `.gitignore` untuk mengecualikan build output, caches, token `.env`, dan upstream unit tests/evals (`hermes-agent/tests/`, `hermes-agent/evals/`) yang berisi mock dummy secrets.
    - Sanitasi 3 dummy fixtures yang sempat memicu deteksi GitHub Secret Scanning.
    - Commit bersih (`af22e634`) dengan 13.862 file terdaftar dan berhasil di-push secara terverifikasi ke `https://github.com/genthaandikaa/AI-AGENT.git` branch `main`.
+9. **Defensive Fix for Skills Catalog Crash in Hermes3D:**
+   - Memperbaiki `TypeError: Cannot read properties of undefined (reading 'trim')` pada `hermes-3d/src/lib/skills/catalog.ts` dan `marketplace.ts`.
+   - Mengamankan pemanggilan `.trim()` dengan fallback null-safe `(skill?.skillKey || skill?.name || "").trim()`.
+   - Melengkapi schema response `skills.status` pada `server/demo-gateway-adapter.js` dengan `SkillStatusEntry` lengkap (`skillKey`, `source`, `baseDir`, dll).
+   - Terverifikasi 100% bebas crash dengan Playwright headless browser test (`harmage/tests/verify_office_fixed.py`).
+10. **Hermes CLI Model Routing & Telegram Context Overflow Fix:**
+   - Mengalihkan primary model di `config.yaml` ke `gemini-2.5-flash` dengan provider `gemini` (terverifikasi aktif dan cepat).
+   - Menghapus conflict `base_url` xkiro pada provider gemini (`hermes config unset model.base_url`).
+   - Mengidentifikasi akar masalah error 429 di Telegram: sesi lama telah mengumpulkan 333 pesan (~372.437 token), melampaui batas input token 250k Google AI Studio Free Tier. Cukup ketik `/new` atau `/reset` di topik Telegram untuk memulai konteks baru yang fresh.
 
 ## Changed Files
 - `E:\AI Agent\.agents\rules\harmage-workflow.md`
