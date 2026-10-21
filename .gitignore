@@ -1,0 +1,57 @@
+# Dependencies
+node_modules/
+*/node_modules/
+*/*/node_modules/
+.pnpm-store/
+
+# Next.js & Vite build artifacts
+.next/
+*/.next/
+dist/
+*/dist/
+build/
+out/
+
+# Python caches & virtual environments
+__pycache__/
+*/__pycache__/
+*/*/__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+env/
+venv/
+.venv/
+
+# Upstream test suites & evals (contain mock API test keys that trigger GitHub secret scanning)
+hermes-agent/tests/
+hermes-agent/evals/
+
+# Database journals and locks
+*.db-wal
+*.db-shm
+*.db-journal
+
+# Secrets & Environment configs
+.env
+.env.*
+*.env
+!.env.example
+!*/.env.example
+
+# Large media outputs and reference videos (prevent GitHub 100MB rejection)
+contoh-video-konten/
+harmage/output/
+*.mp4
+*.wav
+qa_screenshots_*.png
+*.log
+
+# OS & IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local Graphify build caches
+graphify-out/

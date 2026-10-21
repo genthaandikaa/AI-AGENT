@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Harmage Agents — Virtual Enterprise Executive Platform</title>
+  <link rel="stylesheet" href="/static/css/dashboard.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-crest">H</div>
+        <div class="brand-text">
+          <h1>HARMAGE AGENTS</h1>
+          <p>Autonomous AI Enterprise</p>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Core Operations</div>
+        <button class="nav-item active" data-section="overview">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+          Overview
+        </button>
+
+        <button class="nav-item" data-section="organization">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          Organization & NPCs
+        </button>
+
+        <button class="nav-item" data-section="divisions">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+          Business Divisions
+        </button>
+
+        <button class="nav-item" data-section="tasks">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+          Tasks & Projects
+          <span class="nav-badge" id="badge-tasks">0</span>
+        </button>
+
+        <button class="nav-item" data-section="schedule">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          Schedule & Crons
+        </button>
+
+        <div class="nav-section-title">Governance & Records</div>
+        <button class="nav-item" data-section="approvals">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          CEO Approvals
+          <span class="nav-badge alert" id="badge-approvals" style="display: none;">0</span>
+        </button>
+
+        <button class="nav-item" data-section="meetings">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"/></svg>
+          Meeting Records
+        </button>
+
+        <button class="nav-item" data-section="reports">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          Executive Briefings
+        </button>
+
+        <div class="nav-section-title">Infrastructure</div>
+        <button class="nav-item" data-section="integrations">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"/></svg>
+          Integrations & Ports
+        </button>
+
+        <button class="nav-item" data-section="activity">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Activity Audit Log
+        </button>
+
+        <button class="nav-item" data-section="settings">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          Settings & LLM Stack
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="zero-cost-pill">
+          <span>🛡️ BUDGET STATUS</span>
+          <span>$0.00 / FREE</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <main class="main-wrapper">
+      <!-- Topbar Header -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <h2 class="page-title" id="current-page-title">Operational Overview</h2>
+          <div class="system-status-indicator">
+            <span class="status-dot"></span>
+            <span>SYSTEM ONLINE</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button class="btn btn-secondary" id="btn-refresh">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            Refresh
+          </button>
+          <button class="btn btn-primary" id="btn-new-task">
+            + New Task
+          </button>
+        </div>
+      </header>
+
+      <!-- Content Body -->
+      <div class="content-body">
+        
+        <!-- ==================== 1. OVERVIEW SECTION ==================== -->
+        <section class="content-section active" id="section-overview">
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <span class="kpi-title">Active Tasks</span>
+              <span class="kpi-value" id="kpi-active-tasks">0</span>
+              <span class="kpi-sub">Across all business units</span>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-title">Pending Approvals</span>
+              <span class="kpi-value" id="kpi-pending-approvals" style="color: #e11d48;">0</span>
+              <span class="kpi-sub">CEO Governance Gate</span>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-title">Active 2D NPCs</span>
+              <span class="kpi-value" id="kpi-active-npcs">12 / 12</span>
+              <span class="kpi-sub">Fully deployed personas</span>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-title">Operational Budget</span>
+              <span class="kpi-value" id="kpi-budget-spent" style="color: #059669;">$0.00</span>
+              <span class="kpi-sub">Zero-Cost Policy strictly enforced</span>
+            </div>
+          </div>
+
+          <!-- Quick Action Bar -->
+          <div class="surface-panel">
+            <div class="panel-header">
+              <div class="panel-title">⚡ Quick Operational Actions</div>
+            </div>
+            <div class="panel-body" style="display: flex; gap: 12px; flex-wrap: wrap;">
+              <button class="btn btn-secondary" id="btn-trigger-heartbeat">⚡ Trigger Heartbeat</button>
+              <button class="btn btn-primary" id="btn-trigger-production">🎬 Produce Video Now</button>
+              <a href="http://localhost:9119" target="_blank" class="btn btn-secondary">Open Hermes UI (9119)</a>
+              <a href="http://127.0.0.1:20128" target="_blank" class="btn btn-secondary">Open 9Router (20128)</a>
+            </div>
+          </div>
+
+          <!-- Recent Activity Stream -->
+          <div class="surface-panel">
+            <div class="panel-header">
+              <div class="panel-title">⏱️ Live Operational Activity Ticker</div>
+            </div>
+            <div class="panel-body">
+              <div class="log-stream" id="overview-recent-activity">
+                <div style="color: #94a3b8; font-size: 12px;">Loading activity...</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 2. ORGANIZATION SECTION ==================== -->
+        <section class="content-section" id="section-organization">
+          <!-- Hierarchy Tree Summary -->
+          <div class="surface-panel">
+            <div class="panel-header">
+              <div class="panel-title">🏛️ Corporate Organizational Structure</div>
+            </div>
+            <div class="panel-body" style="font-size: 13px; line-height: 1.8;">
+              <div style="font-family: var(--font-mono); background: #f8fafc; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <div>👑 <strong>CEO / Owner (Gentha - Human)</strong></div>
+                <div style="padding-left: 20px;">└── 🎖️ <strong>Alex Vance (Executive Manager / AI Ops Director)</strong></div>
+                <div style="padding-left: 48px;">├── 📋 Sophia Chen (Executive Secretary & Organizer)</div>
+                <div style="padding-left: 48px;">├── 🛡️ Marcus Drake (Treasurer & $0 Financial Gatekeeper)</div>
+                <div style="padding-left: 48px;">└── 🏢 <strong>Business Divisions</strong></div>
+                <div style="padding-left: 76px;">├── 🎬 <strong>Creator Division:</strong> Diana Prince (PM), Ethan Cole (Research), Maya Lin (Script), Leo Sparks (Editor), Zackary Cross (QA), Aria Thorne (Publishing)</div>
+                <div style="padding-left: 76px;">├── 📈 <strong>Affiliate Division:</strong> Victor Sterling (Lead)</div>
+                <div style="padding-left: 76px;">├── 📊 <strong>Trading Division:</strong> Nova Vance (Quant / Paper Trading Only)</div>
+                <div style="padding-left: 76px;">└── 🔐 <strong>Cybersecurity Division:</strong> Kage Kuro (Auth & Secret Watchdog)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2D NPC Roster Grid -->
+          <div>
+            <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 14px;">2D NPC Personas & Assigned Duties</h3>
+            <div class="npc-grid" id="npc-roster-grid">
+              <!-- Populated by JavaScript -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 3. DIVISIONS SECTION ==================== -->
+        <section class="content-section" id="section-divisions">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px;">
+            <!-- Creator Division -->
+            <div class="surface-panel">
+              <div class="panel-header">
+                <div class="panel-title">🎬 Creator Division</div>
+                <span class="badge badge-completed">6 Roles Active</span>
+              </div>
+              <div class="panel-body" style="display: flex; flex-direction: column; gap: 12px; font-size: 13px;">
+                <p>Automated short-form vertical video (9:16) creation engine with native Windows offline TTS, FFmpeg local rendering, and automated QA verification.</p>
+                <div style="background: #f8fafc; padding: 12px; border-radius: 6px; border-left: 3px solid #0284c7;">
+                  <strong>Video Output:</strong> <code>harmage/output/harmage_pilot_short.mp4</code><br>
+                  <strong>Specs:</strong> 1080x1920 (9:16), 14.62s, 30fps, burned subtitles, audio synced.
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 6px;">
+                  <button class="btn btn-primary" onclick="triggerCreatorPipeline()">🎬 Produce New Video</button>
+                  <a href="/static/../../harmage/output/harmage_pilot_short.mp4" target="_blank" class="btn btn-secondary">Download Pilot</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Affiliate Division -->
+            <div class="surface-panel">
+              <div class="panel-header">
+                <div class="panel-title">📈 Affiliate Division</div>
+                <span class="badge badge-queued">Lead: Victor Sterling</span>
+              </div>
+              <div class="panel-body" style="font-size: 13px;">
+                <p>Monitors affiliate partnerships, shortens tracking links, synchronizes campaign metrics with creator video scripts, and tracks conversion funnels.</p>
+                <div style="margin-top: 12px; font-size: 12px; color: #64748b;">
+                  Active campaigns: <strong>Shopee Affiliate, Tokopedia Partner, Hosting Referrals</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- Trading Division -->
+            <div class="surface-panel">
+              <div class="panel-header">
+                <div class="panel-title">📊 Trading Division</div>
+                <span class="badge badge-queued">Lead: Nova Vance</span>
+              </div>
+              <div class="panel-body" style="font-size: 13px;">
+                <p>Algorithmic strategy backtesting and paper simulation. Strict $0 live trading policy enforced—zero real financial risk permitted without written CEO approval.</p>
+                <div style="margin-top: 12px; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 8px 12px; border-radius: 6px; font-size: 11px; color: #065f46;">
+                  🔒 <strong>Live Execution Guard:</strong> DISABLED (Simulation Only)
+                </div>
+              </div>
+            </div>
+
+            <!-- Cybersecurity Division -->
+            <div class="surface-panel">
+              <div class="panel-header">
+                <div class="panel-title">🔐 Cybersecurity Division</div>
+                <span class="badge badge-completed">Lead: Kage Kuro</span>
+              </div>
+              <div class="panel-body" style="font-size: 13px;">
+                <p>Continuous port scanner, secret leak detector in git trees, token security auditor, and unauthorized MCP connection monitor.</p>
+                <div style="margin-top: 12px; font-size: 12px; color: #059669;">
+                  ✓ Zero plain-text API secrets leaked in logs or reports.
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 4. TASKS SECTION ==================== -->
+        <section class="content-section" id="section-tasks">
+          <!-- View Switcher & Filters -->
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-primary" id="btn-view-kanban">Kanban Board</button>
+              <button class="btn btn-secondary" id="btn-view-list">Table View</button>
+            </div>
+            <button class="btn btn-primary" onclick="document.getElementById('modal-create-task').classList.add('open')">+ Create Task</button>
+          </div>
+
+          <!-- Kanban View -->
+          <div class="kanban-board" id="kanban-container">
+            <div class="kanban-col">
+              <div class="kanban-col-header">
+                <span>Queued</span>
+                <span class="kanban-col-count" id="cnt-queued">0</span>
+              </div>
+              <div id="col-queued" style="display: flex; flex-direction: column; gap: 8px;"></div>
+            </div>
+
+            <div class="kanban-col">
+              <div class="kanban-col-header">
+                <span>In Progress</span>
+                <span class="kanban-col-count" id="cnt-in_progress">0</span>
+              </div>
+              <div id="col-in_progress" style="display: flex; flex-direction: column; gap: 8px;"></div>
+            </div>
+
+            <div class="kanban-col">
+              <div class="kanban-col-header">
+                <span>Blocked</span>
+                <span class="kanban-col-count" id="cnt-blocked">0</span>
+              </div>
+              <div id="col-blocked" style="display: flex; flex-direction: column; gap: 8px;"></div>
+            </div>
+
+            <div class="kanban-col">
+              <div class="kanban-col-header">
+                <span>Review</span>
+                <span class="kanban-col-count" id="cnt-review">0</span>
+              </div>
+              <div id="col-review" style="display: flex; flex-direction: column; gap: 8px;"></div>
+            </div>
+
+            <div class="kanban-col">
+              <div class="kanban-col-header">
+                <span>Completed</span>
+                <span class="kanban-col-count" id="cnt-completed">0</span>
+              </div>
+              <div id="col-completed" style="display: flex; flex-direction: column; gap: 8px;"></div>
+            </div>
+          </div>
+
+          <!-- Table View -->
+          <div class="surface-panel" id="task-list-container" style="display: none;">
+            <div class="panel-body" style="padding: 0;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Assignee</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Deadline</th>
+                    <th>Retries</th>
+                  </tr>
+                </thead>
+                <tbody id="task-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 5. SCHEDULE SECTION ==================== -->
+        <section class="content-section" id="section-schedule">
+          <div class="surface-panel">
+            <div class="panel-header">
+              <div class="panel-title">📅 Persistent Operational Schedules & Heartbeats</div>
+              <button class="btn btn-primary" onclick="triggerHeartbeat()">⚡ Trigger Heartbeat</button>
+            </div>
+            <div class="panel-body" style="padding: 0;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Schedule Title</th>
+                    <th>Interval / Cron</th>
+                    <th>Target Role</th>
+                    <th>Action</th>
+                    <th>Next Run</th>
+                    <th>Last Run</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="schedule-grid-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 6. APPROVALS SECTION ==================== -->
+        <section class="content-section" id="section-approvals">
+          <div class="surface-panel">
+            <div class="panel-header">
+              <div class="panel-title">🛡️ CEO Governance Approval Gate</div>
+            </div>
+            <div class="panel-body" style="padding: 0;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Action Type</th>
+                    <th>Description</th>
+                    <th>Requested By</th>
+                    <th>Status</th>
+                    <th>Governance Action</th>
+                  </tr>
+                </thead>
+                <tbody id="approvals-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 7. MEETINGS SECTION ==================== -->
+        <section class="content-section" id="section-meetings">
+          <div id="meetings-list">
+            <!-- Populated by JavaScript -->
+          </div>
+        </section>
+
+        <!-- ==================== 8. REPORTS SECTION ==================== -->
+        <section class="content-section" id="section-reports">
+          <div id="reports-container">
+            <!-- Populated by JavaScript -->
+          </div>
+        </section>
+
+        <!-- ==================== 9. INTEGRATIONS SECTION ==================== -->
+        <section class="content-section" id="section-integrations">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px;">
+            <div class="surface-panel">
+              <div class="panel-header">
+                <div class="panel-title">🌐 Active Ports & Local Daemons</div>
+              </div>
+              <div class="panel-body" id="integ-ports-list"></div>
+            </div>
+
+            <div class="surface-panel">
+              <div class="panel-header">
+                <div class="panel-title">🛠️ Local Tools & Extensions</div>
+              </div>
+              <div class="panel-body" id="integ-tools-list"></div>
+            </div>
+
+            <div class="surface-panel" style="grid-column: 1 / -1;">
+              <div class="panel-header">
+                <div class="panel-title">🧠 LLM Provider Cascade & $0 Policy</div>
+              </div>
+              <div class="panel-body" id="integ-llm-stack"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 10. ACTIVITY SECTION ==================== -->
+        <section class="content-section" id="section-activity">
+          <div class="surface-panel">
+            <div class="panel-header">
+              <div class="panel-title">📝 Full System Activity Audit Trail</div>
+            </div>
+            <div class="panel-body">
+              <div class="log-stream" id="full-activity-stream" style="max-height: 600px;"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 11. SETTINGS SECTION ==================== -->
+        <section class="content-section" id="section-settings">
+          <div class="surface-panel">
+            <div class="panel-header">
+              <div class="panel-title">⚙️ Operational System Settings</div>
+            </div>
+            <div class="panel-body" style="display: flex; flex-direction: column; gap: 16px; font-size: 13px;">
+              <div>
+                <strong>Primary Workspace:</strong> <code>E:\AI Agent</code>
+              </div>
+              <div>
+                <strong>Local VPS Host:</strong> Windows (Native laptop environment, $0 Cloud Cost)
+              </div>
+              <div>
+                <strong>Telegram Owner ID:</strong> <code>8116783065</code> (Gentha / CEO)
+              </div>
+              <div>
+                <strong>Active Bot Gateway:</strong> <code>@weelsz_bot</code> on PID 4020
+              </div>
+              <div>
+                <strong>SQLite Database:</strong> <code>E:\AI Agent\harmage\data\harmage_operations.db</code> (WAL mode enabled)
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- Modal: Create Task -->
+  <div class="modal-overlay" id="modal-create-task">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">Create New Task</h3>
+        <button class="modal-close">&times;</button>
+      </div>
+      <form id="form-create-task">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Task Title</label>
+            <input type="text" class="form-input" id="task-input-title" required placeholder="e.g., Generate TikTok Hook for Affiliate Promo">
+          </div>
+          <div class="form-group">
+            <label>Assignee (Role)</label>
+            <select class="form-select" id="task-input-assignee" required>
+              <option value="executive_manager">Alex Vance (Executive Manager)</option>
+              <option value="executive_secretary">Sophia Chen (Secretary)</option>
+              <option value="treasurer">Marcus Drake (Treasurer)</option>
+              <option value="creator_pm">Diana Prince (Creator PM)</option>
+              <option value="content_researcher">Ethan Cole (Researcher)</option>
+              <option value="scriptwriter">Maya Lin (Scriptwriter)</option>
+              <option value="video_editor">Leo Sparks (Video Editor)</option>
+              <option value="quality_assurance">Zackary Cross (QA)</option>
+              <option value="publishing_specialist">Aria Thorne (Publishing)</option>
+              <option value="affiliate_lead">Victor Sterling (Affiliate Lead)</option>
+              <option value="quant_specialist">Nova Vance (Quant)</option>
+              <option value="security_specialist">Kage Kuro (Security)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Priority</label>
+            <select class="form-select" id="task-input-priority">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+              <option value="critical">Critical</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Deadline (Optional)</label>
+            <input type="datetime-local" class="form-input" id="task-input-deadline">
+          </div>
+          <div class="form-group">
+            <label>Description & Scope</label>
+            <textarea class="form-textarea" id="task-input-desc" rows="3" placeholder="Outline specific deliverables and expectations..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary modal-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: NPC Detail -->
+  <div class="modal-overlay" id="modal-npc-detail">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="npc-modal-title">NPC Profile</h3>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body" style="font-size: 13px;">
+        <div style="display: flex; gap: 16px; align-items: center;">
+          <div id="npc-modal-avatar" style="width: 64px; height: 64px;"></div>
+          <div>
+            <div id="npc-modal-division" style="font-weight: 700; color: #0284c7;"></div>
+            <div id="npc-modal-traits" style="margin-top: 4px;"></div>
+          </div>
+        </div>
+        <div>
+          <strong>Tone of Voice:</strong>
+          <p id="npc-modal-tone" style="color: #64748b; margin-top: 2px;"></p>
+        </div>
+        <div>
+          <strong>Key Competencies:</strong>
+          <ul id="npc-modal-competencies" style="padding-left: 20px; margin-top: 4px;"></ul>
+        </div>
+        <div>
+          <strong>Allowed Tools & MCPs:</strong>
+          <div id="npc-modal-tools" style="margin-top: 4px; display: flex; flex-wrap: wrap; gap: 4px;"></div>
+        </div>
+        <div>
+          <strong>System Prompt & Boundaries:</strong>
+          <pre id="npc-modal-prompt" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px; font-family: var(--font-mono); font-size: 11px; white-space: pre-wrap; margin-top: 4px; max-height: 200px; overflow-y: auto;"></pre>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary modal-cancel">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Task Detail -->
+  <div class="modal-overlay" id="modal-task-detail">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title"><span id="task-detail-id"></span>: <span id="task-detail-title"></span></h3>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body" style="font-size: 13px; display: flex; flex-direction: column; gap: 10px;">
+        <div><strong>Assignee:</strong> <span id="task-detail-assignee"></span></div>
+        <div><strong>Priority:</strong> <span id="task-detail-priority"></span></div>
+        <div><strong>Status:</strong> <span id="task-detail-status"></span></div>
+        <div><strong>Retry Attempts:</strong> <span id="task-detail-retries"></span></div>
+        <div>
+          <strong>Description:</strong>
+          <p id="task-detail-desc" style="color: #475569; margin-top: 4px;"></p>
+        </div>
+        <div>
+          <strong>Verification Evidence:</strong>
+          <pre id="task-detail-evidence" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px; font-family: var(--font-mono); font-size: 11px; margin-top: 4px;"></pre>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary modal-cancel">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/dashboard.js"></script>
+</body>
+</html>
