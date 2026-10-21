@@ -64,17 +64,18 @@ export const getPackagedSkillById = (
   PACKAGED_SKILLS.find((skill) => skill.packageId === packageId) ?? null;
 
 export const getPackagedSkillBySkillKey = (
-  skillKey: string,
+  skillKey?: string | null,
 ): PackagedSkillDefinition | null => {
-  const normalized = skillKey.trim();
+  const normalized = typeof skillKey === "string" ? skillKey.trim() : "";
+  if (!normalized) return null;
   return PACKAGED_SKILLS.find((skill) => skill.skillKey === normalized) ?? null;
 };
 
 export const buildPackagedSkillStatusEntry = (
   skill: PackagedSkillDefinition,
 ): SkillStatusEntry => ({
-  name: skill.name,
-  description: skill.description,
+  name: skill.name ?? "(Unnamed Skill)",
+  description: skill.description ?? "(No description)",
   source: "hermes-extra",
   bundled: false,
   filePath: "",
@@ -91,14 +92,26 @@ export const buildPackagedSkillStatusEntry = (
 });
 
 export const appendPackagedSkillsToMarketplace = (
-  skills: SkillStatusEntry[],
+  skills?: SkillStatusEntry[] | null,
 ): SkillStatusEntry[] => {
-  const presentKeys = new Set(skills.map((skill) => skill.skillKey.trim()));
+  const safeSkills = Array.isArray(skills) ? skills.filter(Boolean) : [];
+  const presentKeys = new Set(
+    safeSkills
+      .map((skill) => {
+        const key = typeof skill?.skillKey === "string" && skill.skillKey.trim()
+          ? skill.skillKey.trim()
+          : typeof skill?.name === "string"
+            ? skill.name.trim()
+            : "";
+        return key;
+      })
+      .filter(Boolean),
+  );
   const additions = PACKAGED_SKILLS.filter(
     (skill) => !presentKeys.has(skill.skillKey),
   ).map(buildPackagedSkillStatusEntry);
   if (additions.length === 0) {
-    return skills;
+    return safeSkills;
   }
-  return [...additions, ...skills];
+  return [...additions, ...safeSkills];
 };

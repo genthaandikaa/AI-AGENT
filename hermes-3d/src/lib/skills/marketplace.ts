@@ -164,8 +164,8 @@ const buildFallbackCapabilities = (skill: SkillStatusEntry): string[] => {
 const buildFallbackMetadata = (
   skill: SkillStatusEntry,
 ): SkillMarketplaceMetadata => {
-  const normalizedKey = skill.skillKey.trim().toLowerCase();
-  const source = skill.source.trim();
+  const normalizedKey = (skill?.skillKey || skill?.name || ``).trim().toLowerCase();
+  const source = (skill?.source || ``).trim();
   const seed = hashString(`${normalizedKey}:${source}`);
   const category =
     skill.bundled || source === "hermes-bundled"
@@ -188,7 +188,7 @@ const buildFallbackMetadata = (
   return {
     category,
     tagline:
-      skill.description.trim() ||
+      (skill?.description || ``).trim() ||
       `${titleCaseWords(skill.name)} capability pack.`,
     trustLabel,
     capabilities: buildFallbackCapabilities(skill),
@@ -201,10 +201,10 @@ const buildFallbackMetadata = (
 export const resolveSkillMarketplaceMetadata = (
   skill: SkillStatusEntry,
 ): SkillMarketplaceMetadata => {
-  const normalizedKey = skill.skillKey.trim().toLowerCase();
+  const normalizedKey = (skill?.skillKey || skill?.name || ``).trim().toLowerCase();
   const fallback = buildFallbackMetadata(skill);
   const override = SKILL_MARKETPLACE_OVERRIDES[normalizedKey];
-  const packagedSkill = getPackagedSkillBySkillKey(skill.skillKey);
+  const packagedSkill = getPackagedSkillBySkillKey(skill?.skillKey || skill?.name);
   if (!override) {
     return {
       ...fallback,
@@ -226,9 +226,9 @@ export const resolveSkillMarketplaceMetadata = (
 export const buildSkillMarketplaceEntry = (
   skill: SkillStatusEntry,
 ): SkillMarketplaceEntry => {
-  const packagedSkill = getPackagedSkillBySkillKey(skill.skillKey);
+  const packagedSkill = getPackagedSkillBySkillKey(skill?.skillKey || skill?.name);
   const missingDetails = buildSkillMissingDetails(skill);
-  if (packagedSkill && !skill.baseDir.trim()) {
+  if (packagedSkill && !(skill?.baseDir || ``).trim()) {
     missingDetails.unshift(
       "Install this packaged Hermes3D skill to make it available on the gateway.",
     );

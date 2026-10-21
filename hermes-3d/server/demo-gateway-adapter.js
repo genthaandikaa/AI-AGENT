@@ -559,7 +559,42 @@ async function handleMethod(method, params, id, sendEvent) {
       return resOk(id, { models: MODELS });
 
     case "skills.status":
-      return resOk(id, { skills: [{ name: "TASK-MANAGER", status: "installed", version: "1.0.0" }] });
+      return resOk(id, {
+        skills: [
+          {
+            skillKey: "task-manager",
+            name: "task-manager",
+            description: "Capture actionable requests as persistent tasks and keep a shared Kanban task store in sync.",
+            source: "hermes-workspace",
+            baseDir: "/harmage/skills/task-manager",
+            filePath: "/harmage/skills/task-manager/SKILL.md",
+            bundled: false,
+            always: true,
+            disabled: false,
+            eligible: true,
+            requirements: { bins: [], anyBins: [], env: [], config: [], os: [] },
+            missing: { bins: [], anyBins: [], env: [], config: [], os: [] },
+            configChecks: [],
+            install: [],
+          },
+          {
+            skillKey: "todo-board",
+            name: "todo",
+            description: "Maintain a shared workspace TODO list with blocked tasks.",
+            source: "hermes-workspace",
+            baseDir: "/harmage/skills/todo-board",
+            filePath: "/harmage/skills/todo-board/SKILL.md",
+            bundled: false,
+            always: true,
+            disabled: false,
+            eligible: true,
+            requirements: { bins: [], anyBins: [], env: [], config: [], os: [] },
+            missing: { bins: [], anyBins: [], env: [], config: [], os: [] },
+            configChecks: [],
+            install: [],
+          },
+        ],
+      });
 
     case "cron.list":
       return resOk(id, { jobs: [] });
