@@ -391,8 +391,13 @@ async function syncFromHarmage() {
     if (brainRes && brainRes.ok) brainData = await brainRes.json();
 
     // Refresh roster names/roles/live status from the real backend
+    // (create missing agents instead of skipping them, so the roster can
+    // never get stuck empty after a failed boot-time bootstrap).
     for (const npc of npcs || []) {
       const canonicalId = resolveAssignee(npc.id) || npc.id;
+      if (!agents.has(canonicalId)) {
+        agents.set(canonicalId, { id: canonicalId, name: npc.name, role: npc.role_title, workspace: `/harmage/${canonicalId}` });
+      }
       const agent = agents.get(canonicalId);
       if (!agent) continue;
       if (npc.name) agent.name = npc.name;
