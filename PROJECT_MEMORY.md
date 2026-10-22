@@ -47,7 +47,7 @@
 - **Playwright:** Configured with installed Google Chrome (`C:\Program Files\Google\Chrome\Application\chrome.exe`).
 
 ---
-
+–
 ## Verified Decisions and Constraints
 1. **Zero-Cost Cloud Policy:** Strict $0 budget. No paid cloud APIs, no subscriptions without explicit CEO approval.
 2. **Shared AI Budget:** 2.000.000 token per hari gabungan Qwen + Gemini. Zona waktu reset: `Asia/Jakarta` (WIB).
@@ -74,3 +74,4 @@
 - 2026-10-21: Autonomous AI NPC Complex Brain & Simulation Engine (`harmage/npc_brain.py`): Implemented dynamic emotional simulation (morale, energy, stress, thoughts), schedule management based on WIB time (Morning Focus, Lunch Break, Afternoon Production, Standup Meeting, Free Rest), and autonomous inter-agent banter dialogue broadcast as `office.speech` bubbles. Created and registered dedicated skill `harmage-hermes-runtime` locally and globally.
 - 2026-10-21: Purged All Hardcoded Dialogue Pools & Interaction Pairs: Refactored `harmage/npc_brain.py` to eliminate all static dialogue pools and canned if-else interaction pairs. Directly wired into `harmage.npc.build_npc_roster()` for dynamic persona souls, added persistent SQLite tables `npc_brain_memories` and `npc_brain_interactions`, integrated AI LLM completion with circuit breaker, and implemented dynamic procedural synthesis grounded in live SQLite tasks, actual token metrics, and real persona vocabulary ($0 cost fallback). Enhanced gateway adapter to stream speech bubbles to both 2D Pixel Office and 3D Retro Office. 100% verified via automated test suite.
 - 2026-10-22: Dynamic xKiro API Key Hot-Reloading & Live Hermes Gateway Hardening: Integrated runtime key auto-reloading (`_load_env_key()`) into `harmage/llm_brain.py` so newly added API keys in `.env` take effect immediately without backend reboots. Hardened gateway adapter (`hermes-3d/server/demo-gateway-adapter.js`) to continuously stream all 10 agent live statuses and SQLite active task titles. Verified all 5 enterprise daemons running concurrently (Port 9200 FastAPI, Port 18789 Hermes Adapter, Port 3000 Next.js Office, Port 5173 Vite Dashboard, and host Telegram daemon) with 10/10 working agents seated at their respective desks. Changes cleanly committed and pushed to GitHub main branch.
+- 2026-10-22: MiniMax 50M Event Token Pool Integration & Reasoning Architecture: Integrated xKiro 50M MiniMax Welcome Drop event token pool (`minimax/minimax-m3.1-flash` & `minimax/minimax-m3`) into `harmage/llm_brain.py` with custom reasoning token handling and fallback protection. Configured Hermes CLI `config.yaml` and `.env` with active xKiro key and MiniMax fallback. All 4 services verified live (9200, 3000, 5173, 18789) with 10/10 working agents. Cleanly committed and pushed to GitHub main branch.
