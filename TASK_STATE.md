@@ -10,11 +10,11 @@ Setup Harmage Antigravity Improvement Pack, integrasikan Hermes3D office NPC aga
 - **Installed Skills:** `graphify-workflow`, `project-memory`, `skill-auditor`, `verify-before-done`, `harmage-hermes-runtime` (terpasang di `.agents/skills` dan global `~/.gemini/config/skills`).
 - **Graphify CLI:** `graphify 0.9.58` terverifikasi.
 - **Daemons Running:**
-  - Port 5173: Frontend Vite Dashboard (Task-3298, PID 20092)
-  - Port 9200: Harmage FastAPI Backend Server (Task-4551, PID 17584)
-  - Port 3000: Hermes3D Office Next.js (Task-4183, PID 16124)
-  - Port 18789: Hermes3D Gateway Adapter (Task-4555)
-  - Telegram Gateway: Hermes Agent CLI Gateway Run (Task-3760, Connected)
+  - Port 5173: Frontend Vite Dashboard (Task-4632, PID 9440)
+  - Port 9200: Harmage FastAPI Backend Server (Task-4695, PID 10924)
+  - Port 3000: Hermes3D Office Next.js (Task-4628, PID 23348)
+  - Port 18789: Hermes Enterprise Gateway Adapter (Task-4626, PID 11280)
+  - Telegram Gateway: Hermes Agent CLI Gateway Daemon (PID 16088, Connected)
 
 ## Completed
 1. **Harmage Antigravity Improvement Pack:**

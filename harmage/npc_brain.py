@@ -193,10 +193,10 @@ class HarmageNPCBrainManager:
                 energy=random.randint(85, 96),
                 stress=random.randint(15, 28),
                 emotion=default_emotion,
-                current_thought="",
+                current_thought=f"Fokus menggarap target {profile.division} hari ini.",
                 status="working",
                 vibe_personality=vibe,
-                last_thought_time=0.0
+                last_thought_time=time.time()
             )
 
     def get_current_wib_time(self) -> datetime.datetime:
@@ -523,11 +523,12 @@ class HarmageNPCBrainManager:
         self,
         agent_id: str,
         active_task: Optional[Dict[str, Any]] = None,
-        force_refresh: bool = False
+        force_refresh: bool = False,
+        try_ai: bool = False
     ) -> str:
         """
         Generates a fresh, context-aware thought for an agent:
-        Uses LLM if available, or procedural synthesis grounded in real SQLite state.
+        Uses LLM if requested and available, or procedural synthesis grounded in real SQLite state.
         Persists into SQLite npc_brain_memories table.
         """
         canonical_id = self._canonical_id(agent_id)
@@ -553,20 +554,22 @@ class HarmageNPCBrainManager:
         task_title = active_task.get("title", "") if active_task else (state.assigned_task or "")
         task_id = active_task.get("id", "") if active_task else ""
 
-        # Attempt AI generation if token budget allows
-        prompt = (
-            f"Kamu adalah {profile.name} ({profile.role_title}) di Harmage Enterprise. "
-            f"Gaya bicaramu: {profile.tone_of_voice}. Kepribadian: {', '.join(profile.personality_traits[:3])}. "
-            f"Situasi kantor sekarang: {sched['period_label']} ({sched['wib_time']}). "
-            f"Tugas aktifmu di SQLite: '{task_title}'. "
-            f"Tuliskan 1 kalimat monolog batin / pikiran dalam hatimu yang sangat singkat (maksimal 18 kata), "
-            f"savage/gaul ala Gen-Z, to-the-point, dan berkaitan langsung dengan tugasmu atau situasi kantor saat ini."
-        )
-        ai_thought = self._call_ai_completion(prompt, system_prompt=profile.system_prompt, max_tokens=60)
-        
-        if ai_thought and len(ai_thought) > 10 and not ai_thought.startswith("⚠️"):
-            thought = ai_thought.strip().strip('"').strip("'")
-        else:
+        thought = None
+        # Attempt AI generation if explicitly requested
+        if try_ai:
+            prompt = (
+                f"Kamu adalah {profile.name} ({profile.role_title}) di Harmage Enterprise. "
+                f"Gaya bicaramu: {profile.tone_of_voice}. Kepribadian: {', '.join(profile.personality_traits[:3])}. "
+                f"Situasi kantor sekarang: {sched['period_label']} ({sched['wib_time']}). "
+                f"Tugas aktifmu di SQLite: '{task_title}'. "
+                f"Tuliskan 1 kalimat monolog batin / pikiran dalam hatimu yang sangat singkat (maksimal 18 kata), "
+                f"savage/gaul ala Gen-Z, to-the-point, dan berkaitan langsung dengan tugasmu atau situasi kantor saat ini."
+            )
+            ai_thought = self._call_ai_completion(prompt, system_prompt=profile.system_prompt, max_tokens=60)
+            if ai_thought and len(ai_thought) > 10 and not ai_thought.startswith("⚠️"):
+                thought = ai_thought.strip().strip('"').strip("'")
+
+        if not thought:
             thought = self._synthesize_procedural_thought(canonical_id, profile, active_task, sched, state)
 
         # Update state and record memory in SQLite
@@ -662,8 +665,8 @@ class HarmageNPCBrainManager:
                 state.status = "idle"
                 state.emotion = "Santai (Tugas Selesai)"
 
-            # Generate dynamic thought and persist
-            state.current_thought = self.generate_dynamic_thought(agent_id, active_task=active_task, force_refresh=True)
+            # Generate dynamic thought and persist (reuses cache within 45s for instant response)
+            state.current_thought = self.generate_dynamic_thought(agent_id, active_task=active_task, force_refresh=False)
             updated_list.append(asdict(state))
 
         return updated_list
