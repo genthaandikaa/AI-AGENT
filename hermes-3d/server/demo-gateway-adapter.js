@@ -359,9 +359,14 @@ function lifecycleEvent(agentId, phase, runId) {
 let workingSet = new Set();
 
 function emitWorkingTransitions(nextWorking) {
+  // Emit "start" for ALL currently-working agents every sync cycle.
+  // The UI has a 5-second latch (WORKING_LATCH_MS) — without periodic
+  // refresh the agent visually drops to idle after 5s even though the
+  // task is still in_progress. Re-sending "start" keeps the latch alive.
   for (const agentId of nextWorking) {
-    if (!workingSet.has(agentId)) broadcastEvent(lifecycleEvent(agentId, "start"));
+    broadcastEvent(lifecycleEvent(agentId, "start"));
   }
+  // Only emit "end" when an agent actually stops working.
   for (const agentId of workingSet) {
     if (!nextWorking.has(agentId)) broadcastEvent(lifecycleEvent(agentId, "end"));
   }
