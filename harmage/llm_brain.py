@@ -49,6 +49,10 @@ QWEN_MODELS = [
 ]
 PRIMARY_MODEL = QWEN_MODELS[0]
 FALLBACK_MODEL = QWEN_MODELS[1]
+MINIMAX_MODELS = [
+    "minimax/minimax-m3.1-flash",
+    "minimax/minimax-m3",
+]
 GEMINI_MODEL = ["google/gemini-2.5-flash:free",
                 "google/gemini-3.5-flash:free",
                 "google/gemini-3.6-flash:free",
@@ -113,31 +117,45 @@ def call_llm_completion(
     }
 
     # Model selection based on preferred provider
-    if preferred_provider == "gemini":
-        candidate_models = GEMINI_MODEL + QWEN_MODELS
+    if preferred_provider == "minimax":
+        candidate_models = MINIMAX_MODELS + QWEN_MODELS + GEMINI_MODEL
+    elif preferred_provider == "gemini":
+        candidate_models = GEMINI_MODEL + MINIMAX_MODELS + QWEN_MODELS
     else:
-        candidate_models = QWEN_MODELS + GEMINI_MODEL
+        candidate_models = MINIMAX_MODELS + QWEN_MODELS + GEMINI_MODEL
 
     for model in candidate_models:
+        chosen_max_tokens = max(effective_max_tokens, 250) if "minimax" in model.lower() else effective_max_tokens
         payload = {
             "model": model,
             "messages": adapted_messages,
-            "max_tokens": effective_max_tokens,
+            "max_tokens": chosen_max_tokens,
             "temperature": 0.8
         }
         req = urllib.request.Request(XKIRO_URL, data=json.dumps(payload).encode("utf-8"), headers=headers)
         try:
-            with urllib.request.urlopen(req, timeout=5) as resp:
+            with urllib.request.urlopen(req, timeout=8) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
-                content = data["choices"][0]["message"]["content"]
+                choice_msg = data.get("choices", [{}])[0].get("message", {})
+                content = (choice_msg.get("content") or "").strip()
+                if not content and choice_msg.get("reasoning_content"):
+                    content = choice_msg["reasoning_content"].strip()
                 
+                if not content:
+                    continue
+
                 # 3. Post-call Reconciliation with Provider Usage
                 usage = data.get("usage", {})
                 p_tokens = usage.get("prompt_tokens")
                 c_tokens = usage.get("completion_tokens")
                 t_tokens = usage.get("total_tokens")
                 
-                provider_name = "gemini" if "gemini" in model.lower() else "qwen"
+                if "minimax" in model.lower():
+                    provider_name = "minimax"
+                elif "gemini" in model.lower():
+                    provider_name = "gemini"
+                else:
+                    provider_name = "qwen"
                 
                 token_budget_manager.reconcile_usage(
                     reservation_id=res_id,
@@ -153,9 +171,10 @@ def call_llm_completion(
                 )
                 return content
         except urllib.error.HTTPError as http_err:
-            if http_err.code in (401, 403, 429):
-                # Account-wide rate-limit or auth failure; break fast to avoid hanging
+            if http_err.code in (401, 403):
+                # Auth error — invalid key
                 break
+            # On 429 rate limit, smoothly try next candidate model
             continue
         except Exception:
             continue
