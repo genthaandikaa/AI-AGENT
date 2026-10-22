@@ -284,6 +284,8 @@ function agentListPayload() {
     workspace: agent.workspace,
     identity: { name: agent.name, emoji: "🤖" },
     role: agent.role,
+    liveStatus: agent.liveStatus || "working",
+    current_task: agent.current_task || null,
   }));
 }
 
@@ -851,6 +853,7 @@ function startAdapter() {
 
       if (method === "connect") {
         connected = true;
+        void syncFromHarmage();
         const adapterType = "hermes";
 
         send({
@@ -1053,8 +1056,8 @@ function startAdapter() {
   // Live mirror of the Harmage backend: re-sync real tasks/agents every 10s and
   // broadcast lifecycle transitions so the office shows who is ACTUALLY working.
   setInterval(() => {
-    if (activeSendEventFns.size === 0) return;
     syncFromHarmage().then((ok) => {
+      if (!ok || activeSendEventFns.size === 0) return;
       if (!ok) return;
       for (const agentId of workingSet) {
         const key = sessionKeyFor(agentId);

@@ -49,7 +49,11 @@ QWEN_MODELS = [
 ]
 PRIMARY_MODEL = QWEN_MODELS[0]
 FALLBACK_MODEL = QWEN_MODELS[1]
-GEMINI_MODEL = "google/gemini-2.5-flash:free"
+GEMINI_MODEL = ["google/gemini-2.5-flash:free",
+                "google/gemini-3.5-flash:free",
+                "google/gemini-3.6-flash:free",
+                "google/gemini-3.8-flash:free"
+]
 
 
 def call_llm_completion(
@@ -101,17 +105,18 @@ def call_llm_completion(
         # Enforce brief output
         adapted_messages[0]["content"] += " [MODE CONSERVATION: Jawab super ringkas & to the point max 2 kalimat]."
 
+    active_key = _load_env_key()
     headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {XKIRO_KEY}",
+        "Authorization": f"Bearer {active_key}",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     }
 
     # Model selection based on preferred provider
     if preferred_provider == "gemini":
-        candidate_models = [GEMINI_MODEL] + QWEN_MODELS
+        candidate_models = GEMINI_MODEL + QWEN_MODELS
     else:
-        candidate_models = QWEN_MODELS + [GEMINI_MODEL]
+        candidate_models = QWEN_MODELS + GEMINI_MODEL
 
     for model in candidate_models:
         payload = {
