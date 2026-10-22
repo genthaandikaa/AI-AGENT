@@ -84,6 +84,12 @@ Setup Harmage Antigravity Improvement Pack, integrasikan Hermes3D office NPC aga
     - Menambahkan circuit breaker dan fail-fast logic untuk mencegah bottleneck jaringan saat free model kena rate-limit (429).
     - Meningkatkan gateway adapter (`demo-gateway-adapter.js`) untuk memancarkan speech bubbles langsung ke 2D Pixel Office (via `agent` streaming) dan 3D Retro Office (via `office.speech`).
     - Terverifikasi 100% dengan automated unit tests dan Playwright browser tests.
+15. **Dynamic xKiro API Key Hot-Reloading & Live Hermes Gateway Hardening:**
+    - Menghubungkan fungsi `_load_env_key()` di `harmage/llm_brain.py` agar API key baru di `.env` langsung dimuat secara instan saat ada request tanpa harus restart server.
+    - Memperbaiki response `agentListPayload()` di `hermes-3d/server/demo-gateway-adapter.js` dengan menyertakan `liveStatus: "working"` dan `current_task` aktual dari SQLite.
+    - Memastikan adapter langsung menjalankan sinkronisasi data Harmage begitu client connect dan terus sinkron di background loop.
+    - Mengonfirmasi 5 layanan enterprise berjalan stabil tanpa collision port: Port 9200 (FastAPI), Port 18789 (Hermes Enterprise Gateway), Port 3000 (Hermes3D Next.js Office), Port 5173 (React Vite Dashboard), dan daemon host Telegram (PID 16088).
+    - Seluruh perubahan diverifikasi dan di-push ke remote GitHub `https://github.com/genthaandikaa/AI-AGENT.git` branch `main`.
 
 ## Changed Files
 - `harmage/npc_brain.py`
@@ -97,6 +103,6 @@ Setup Harmage Antigravity Improvement Pack, integrasikan Hermes3D office NPC aga
 - `TASK_STATE.md`
 
 ## Next Action
-1. Buka http://localhost:3000/office untuk melihat seluruh 10 karyawan virtual Harmage duduk bekerja di mejanya dengan speech bubbles dinamis dan pikiran live berbasis tugas riil.
-2. Buka http://127.0.0.1:9200/api/npc/brain/state atau http://127.0.0.1:9200/api/npc/brain/history untuk melihat log interaksi dan monolog batin karyawan yang tersimpan di SQLite.
-3. Buka http://127.0.0.1:5173 untuk memantau sinkronisasi Dashboard Harmage secara live.
+1. Buka http://localhost:3000/office di browser untuk memverifikasi seluruh 10 agen bekerja di meja kerja masing-masing dengan status `HERMES • CONNECTED`.
+2. Buka http://127.0.0.1:9200/api/npc/brain/state untuk memantau status emosi, energi, dan pemikiran dinamis agen secara real-time.
+3. Buka http://127.0.0.1:5173 untuk mengakses dashboard kontrol dan manajemen token budget Harmage.
