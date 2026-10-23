@@ -1,5 +1,19 @@
 [
   {
+    "task_id": "TSK-AGY-B75ABA",
+    "title": "System Health Check - Harmage Infrastructure Audit",
+    "description": "Lakukan pengecekan menyeluruh terhadap sistem Harmage:\n1. Cek status semua 6 server Harmage & Hermes (running/stopped/error)\n2. Periksa token budget balance saat ini\n3. Cek koneksi MCP bridge antara Hermes dan Antigravity\n4. Verifikasi semua division branches (coding, content_creator, video_longform, treasury, executive, qa) accessible\n5. Laporkan anomali, error, atau service yang perlu attention\nOutput: ringkasan status sistem lengkap dengan rekomendasi tindakan jika ada masalah.",
+    "division": "executive",
+    "git_branch": "division/executive-operations",
+    "assignee": "executive_manager",
+    "priority": "high",
+    "requested_by": "Jarvis (Telegram / MCP)",
+    "status": "queued_for_antigravity",
+    "created_at": "2026-10-23T20:09:28.723642+00:00",
+    "completed_at": null,
+    "result_summary": null
+  },
+  {
     "task_id": "TSK-AGY-5C59AD",
     "title": "Uji Koneksi Telegram Jarvis ke Antigravity",
     "description": "Memastikan delegasi tugas otomatis berjalan tanpa memakai token Telegram",

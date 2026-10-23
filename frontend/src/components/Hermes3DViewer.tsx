@@ -10,7 +10,7 @@ export const Hermes3DViewer: React.FC<Hermes3DViewerProps> = () => {
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
-  const hermes3dUrl = "http://localhost:3000/office";
+  const hermes3dUrl = (import.meta as any).env?.VITE_HERMES3D_URL || (typeof window !== "undefined" ? `${window.location.protocol}//${window.location.hostname}:3000/office` : "http://localhost:3000/office");
 
   const handleReload = () => {
     setIsLoaded(false);
@@ -81,7 +81,7 @@ export const Hermes3DViewer: React.FC<Hermes3DViewerProps> = () => {
             <Sparkles className="w-8 h-8 text-purple-400 animate-spin" />
             <div className="text-center">
               <p className="text-xs font-bold text-slate-200">Memuat Hermes 3D Virtual Office...</p>
-              <p className="text-[10px] text-slate-400 mt-1">Menghubungkan ke http://localhost:3000/office</p>
+              <p className="text-[10px] text-slate-400 mt-1">Menghubungkan ke {hermes3dUrl}</p>
             </div>
           </div>
         )}

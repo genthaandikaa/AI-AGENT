@@ -433,9 +433,9 @@ def get_integrations_status() -> Dict[str, Any]:
 
     return {
         "ports": {
-            "harmage_dashboard": {"port": 9200, "status": "ONLINE", "url": "http://localhost:9200"},
-            "hermes_dashboard": {"port": 9119, "status": "ONLINE", "url": "http://localhost:9119"},
-            "router_9router": {"port": 20128, "status": "ONLINE", "url": "http://127.0.0.1:20128"},
+            "harmage_dashboard": {"port": 9200, "status": "ONLINE", "url": f"http://{os.getenv('HARMAGE_HOST', '127.0.0.1')}:9200"},
+            "hermes_dashboard": {"port": 9119, "status": "ONLINE", "url": f"http://{os.getenv('HERMES_DASHBOARD_HOST', '127.0.0.1')}:9119"},
+            "router_9router": {"port": 20128, "status": "ONLINE", "url": f"http://{os.getenv('ROUTER_HOST', '127.0.0.1')}:20128"},
             "telegram_gateway": {"port": "PID 4020", "status": "ONLINE", "bot": "@weelsz_bot", "authorized_user": "8116783065"}
         },
         "tools": {

@@ -289,10 +289,12 @@ function agentListPayload() {
   }));
 }
 
+const HARMAGE_URL = (process.env.HARMAGE_API_URL_OVERRIDE || process.env.HARMAGE_URL || "http://127.0.0.1:9200").replace(/\/$/, "");
+
 async function buildDemoReply(agent, message) {
   try {
     const postData = JSON.stringify({ agent_id: agent.id, message: message });
-    const res = await fetch("http://127.0.0.1:9200/api/chat", {
+    const res = await fetch(`${HARMAGE_URL}/api/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: postData,
@@ -308,7 +310,7 @@ async function buildDemoReply(agent, message) {
 // ---------------------------------------------------------------------------
 // Live sync from the Harmage backend (real agent/task state, not hardcoded)
 // ---------------------------------------------------------------------------
-const HARMAGE_URL = (process.env.HARMAGE_API_URL_OVERRIDE || "http://127.0.0.1:9200").replace(/\/$/, "");
+// HARMAGE_URL hoisted above
 
 const ASSIGNEE_ALIASES = {
   maya_lin: "scriptwriter", maya_script: "scriptwriter", tiktok_specialist: "scriptwriter",

@@ -6,10 +6,11 @@ interface IntegrationsViewProps {
 }
 
 export const IntegrationsView: React.FC<IntegrationsViewProps> = ({ integrations }) => {
+  const host = typeof window !== 'undefined' ? window.location.hostname : '127.0.0.1';
   const ports = integrations?.ports || {
-    harmage_dashboard: { port: 9200, status: 'ONLINE', url: 'http://localhost:9200' },
-    hermes_dashboard: { port: 9119, status: 'ONLINE', url: 'http://localhost:9119' },
-    router_9router: { port: 20128, status: 'ONLINE', url: 'http://127.0.0.1:20128' },
+    harmage_dashboard: { port: 9200, status: 'ONLINE', url: `http://${host}:9200` },
+    hermes_dashboard: { port: 9119, status: 'ONLINE', url: `http://${host}:9119` },
+    router_9router: { port: 20128, status: 'ONLINE', url: `http://${host}:20128` },
     telegram_gateway: { port: 'PID 4020', status: 'ONLINE', bot: '@weelsz_bot' }
   };
 

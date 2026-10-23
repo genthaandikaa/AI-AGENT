@@ -14,6 +14,7 @@ metadata:
 Use this skill whenever the user in Telegram asks to:
 - Write or modify code, scripts, frontend, backend, or APIs.
 - Fix bugs, resolve errors, or debug server services.
+- Search, audit, check, or delete hardcoded credentials/values in the codebase (NEVER use `search_files` or `terminal` yourself — always delegate!).
 - Develop features for any division (Content Creator, TikTok Affiliate, YouTube Long-Form, Coding, Treasury, QA).
 - Run benchmarks, tests, or file audits.
 

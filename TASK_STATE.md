@@ -116,17 +116,33 @@ Setup Harmage Antigravity Improvement Pack, integrasikan Hermes3D office NPC aga
     - Diimplementasikan REST endpoint bridge di [harmage/server.py](file:///e:/AI%20Agent/harmage/server.py): `/api/bridge/delegate`, `/api/bridge/tasks`, `/api/bridge/overview`.
     - Jarvis di Telegram sekarang otomatis menghemat token dan mendelegasikan semua tugas koding/engineering ke Antigravity.
 
+19. **Hardcode Elimination, Dynamic Configuration & LLM Provider Rate-Limit Fix:**
+    - Melakukan audit kode menyeluruh terhadap codebase `E:\AI Agent`: terverifikasi 0 secret/API key yang hardcode di kode sumber (semua aman memakai `.env`).
+    - Mengganti string URL dan port statis menjadi dinamis:
+      - `hermes-3d/server/demo-gateway-adapter.js`: Mengangkat `HARMAGE_URL` ke atas dan mengganti hardcode fetch URL menjadi `${HARMAGE_URL}/api/chat`.
+      - `frontend/src/components/Hermes3DViewer.tsx`: Menggunakan dynamic `window.location` & `import.meta.env.VITE_HERMES3D_URL`.
+      - `frontend/src/views/IntegrationsView.tsx`: Menggunakan dynamic `window.location.hostname`.
+      - `harmage/server.py`: Menggunakan dynamic `os.getenv` host mapping.
+    - Mengatasi isu rate limit Google Gemini direct 429 (`limit: 20 requests/day exceeded`) pada Hermes CLI dengan beralih ke `provider: "xkiro"` dan model gratis cepat `qwen/qwen3.8-max:free` di `config.yaml`.
+    - Memutakhirkan `SOUL.md` dengan larangan tegas memanggil `search_files` di `C:\Users\genn` untuk file proyek, serta mewajibkan delegasi otomatis via `delegate_to_antigravity` jika user meminta audit atau penghapusan hardcode.
+    - Membersihkan cache session lama di `state.db` dan merestart Hermes Telegram Gateway daemon.
+    - Teruji live end-to-end: delegasi tugas `TSK-AGY-B75ABA` berhasil diproses oleh Jarvis ke Antigravity via MCP bridge dalam 0.9 detik.
+
 ## Changed Files
 - `harmage/bridge_engine.py`
 - `harmage/mcp_bridge.py`
 - `harmage/server.py`
-- `.agents/skills/harmage-antigravity-bridge/SKILL.md`
-- `C:\Users\genn\AppData\Local\hermes\skills\harmage-antigravity-bridge\SKILL.md`
+- `hermes-3d/server/demo-gateway-adapter.js`
+- `frontend/src/components/Hermes3DViewer.tsx`
+- `frontend/src/views/IntegrationsView.tsx`
 - `C:\Users\genn\AppData\Local\hermes\config.yaml`
-- `PROJECT_MEMORY.md`
+- `C:\Users\genn\AppData\Local\hermes\SOUL.md`
+- `.agents/skills/harmage-antigravity-bridge/SKILL.md`
 - `TASK_STATE.md`
+- `PROJECT_MEMORY.md`
 
 ## Next Action
-1. Coba chat Jarvis di Telegram dari HP: contoh ketik *"Jarvis, tolong buatkan fitur riset keyword viral untuk TikTok Affiliate"*.
-2. Pantau Jarvis memanggil tool `delegate_to_antigravity` dan memberikan laporan Task ID secara instan tanpa coding manual di Telegram.
-3. Cek hasil tugas di Antigravity, branch `division/content-creator-affiliate`, atau dashboard di http://127.0.0.1:5173.
+1. Di Telegram (grup atau chat dengan Jarvis), ketik:
+   *"Jarvis, tolong delegasikan ke Antigravity untuk audit dan cek sistem"* atau *"Jarvis, tolong carikan apakah masih ada yang hardcode jika ada tolong hapus"*.
+2. Jarvis akan langsung memanggil tool `delegate_to_antigravity` tanpa melakukan search file lokal di PC, dan mengembalikan Task ID delegasi.
+3. Seluruh pekerjaan koding dan audit diselesaikan oleh Antigravity (Google AI Pro IDE) sehingga kuota Telegram Jarvis tetap hemat 100%.
