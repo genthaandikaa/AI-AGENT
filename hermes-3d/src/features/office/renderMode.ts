@@ -1,9 +1,9 @@
-// Office renderer preference: immersive 3D scene vs. lightweight 2D pixel scene.
+// Office renderer preference: 3D Agent HQ vs. lightweight 2D pixel scene vs. Retro 3D.
 // Persisted in localStorage so the choice survives reloads.
 
 import { detectSoftwareWebGL } from "@/features/retro-office/core/graphicsQuality";
 
-export type OfficeRenderMode = "3d" | "2d";
+export type OfficeRenderMode = "agent-hq" | "3d" | "2d";
 
 export const OFFICE_RENDER_MODE_STORAGE_KEY = "hermes-office-render-mode-v1";
 
@@ -13,19 +13,24 @@ export const OFFICE_RENDER_MODE_OPTIONS: Array<{
   description: string;
 }> = [
   {
-    id: "3d",
-    label: "3D immersive",
-    description: "Full Three.js office with shadows and post-processing.",
+    id: "agent-hq",
+    label: "3D Agent HQ",
+    description: "Futuristic isometric Agent HQ with central brain hub and 8 department rooms.",
   },
   {
     id: "2d",
     label: "2D pixel",
     description: "Gather-style pixel office. Great for low-power machines.",
   },
+  {
+    id: "3d",
+    label: "Retro 3D",
+    description: "Classic Three.js retro office with desks and furniture.",
+  },
 ];
 
 export const isOfficeRenderMode = (value: unknown): value is OfficeRenderMode =>
-  value === "3d" || value === "2d";
+  value === "agent-hq" || value === "3d" || value === "2d";
 
 /** The explicit user choice, or null when the user never picked one. */
 export const loadStoredOfficeRenderMode = (): OfficeRenderMode | null => {
@@ -40,12 +45,10 @@ export const loadStoredOfficeRenderMode = (): OfficeRenderMode | null => {
 };
 
 /**
- * The mode the office should boot with: the user's stored choice, or a
- * hardware-appropriate default. Machines that rasterize WebGL in software
- * cannot drive the 3D pipeline smoothly, so they default to the pixel office.
+ * The mode the office should boot with: the user's stored choice, or defaults to "agent-hq".
  */
 export const resolveInitialOfficeRenderMode = (): OfficeRenderMode =>
-  loadStoredOfficeRenderMode() ?? (detectSoftwareWebGL() ? "2d" : "3d");
+  loadStoredOfficeRenderMode() ?? "agent-hq";
 
 export const saveOfficeRenderMode = (mode: OfficeRenderMode) => {
   if (typeof window === "undefined") return;

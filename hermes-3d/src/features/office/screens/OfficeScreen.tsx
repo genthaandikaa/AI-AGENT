@@ -11,6 +11,7 @@ import {
 import { useRouter } from "next/navigation";
 import { MessageSquare, ChevronDown, ChevronLeft, ChevronRight, Mic } from "lucide-react";
 import { RetroOffice3D } from "@/features/retro-office/RetroOffice3D";
+import { AgentHQ3D } from "@/features/agent-hq/AgentHQ3D";
 import type { OfficeAgent } from "@/features/retro-office/core/types";
 import { PixelOffice2D } from "@/features/pixel-office/PixelOffice2D";
 import {
@@ -4516,6 +4517,16 @@ export function OfficeScreen({
             HERMES3D
           </p>
         </div>
+        ) : officeRenderMode === "agent-hq" ? (
+        <AgentHQ3D
+          agents={allVisibleAgents}
+          renderMode={officeRenderMode}
+          onRenderModeChange={handleOfficeRenderModeChange}
+          onAgentChatSelect={(agentId) => {
+            handleOpenAgentChat(agentId);
+          }}
+          officeTitle={officeTitle}
+        />
         ) : officeRenderMode === "2d" ? (
         <PixelOffice2D
           agents={allVisibleAgents}
