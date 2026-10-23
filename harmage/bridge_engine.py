@@ -154,7 +154,22 @@ def send_telegram_notification(
             return {"success": True, "result": data.get("result", {})}
     except urllib.error.HTTPError as e:
         err_msg = e.read().decode("utf-8", errors="ignore")
-        # Fallback: if topic thread rejected, send to channel or direct user
+        # Fallback 1: If Markdown entity parsing failed, retry as plain text (no parse_mode)
+        if "parse_mode" in payload and "can't parse entities" in err_msg.lower():
+            del payload["parse_mode"]
+            try:
+                req_plain = urllib.request.Request(
+                    f"https://api.telegram.org/bot{token}/sendMessage",
+                    data=json.dumps(payload).encode("utf-8"),
+                    headers={"Content-Type": "application/json"}
+                )
+                with urllib.request.urlopen(req_plain, timeout=10) as resp_plain:
+                    data_plain = json.loads(resp_plain.read().decode("utf-8"))
+                    return {"success": True, "result": data_plain.get("result", {}), "fallback": "plain_text"}
+            except Exception:
+                pass
+
+        # Fallback 2: if topic thread rejected, send to channel or direct user
         if "message_thread_id" in payload:
             del payload["message_thread_id"]
             try:

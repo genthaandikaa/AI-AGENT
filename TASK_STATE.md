@@ -144,22 +144,21 @@ Setup Harmage Antigravity Improvement Pack, integrasikan Hermes3D office NPC aga
     - Teruji 100% via Playwright headless Chrome: 0 fatal console error, 60 FPS, dan kartu penyelesaian tugas otomatis dipost ke Telegram (Message ID #224).
     - Commit `32810a41` dipush ke remote GitHub main.
 
+22. **Harmage Backend <-> Hermes Native Kanban (:9119) Sync Bridge (`TSK-AGY-231AF7`):**
+    - Mengatasi masalah disparate task board antara Harmage backend (:9200) dengan Hermes Native Kanban (:9119) yang sebelumnya kosong melompong.
+    - Membangun `harmage/kanban_sync_bridge.py` dengan interval sinkronisasi 10 detik, mapping status (Queued->Todo, In Progress->Running, Completed->Done, Blocked->Blocked), dan priority mapping presisi.
+    - Idempotensi terjamin menggunakan `idempotency_key = <Harmage Task ID>` pada SQLite `kanban.db`.
+    - Reverse sync: Perubahan status kartu manual di UI Hermes Kanban otomatis di-push kembali ke Harmage FastAPI backend (`POST /api/tasks/{task_id}/status`).
+    - Terverifikasi live via Playwright: 19 task Harmage tampil 100% pada `http://127.0.0.1:9119/kanban?profile=default`.
+    - Notifikasi selesai terkirim instan ke Telegram via `@weelsz_bot`.
+
 ## Changed Files
-- `hermes-3d/src/features/agent-hq/AgentHQ3D.tsx`
-- `hermes-3d/src/features/agent-hq/AgentHQHud.tsx`
-- `hermes-3d/src/features/agent-hq/AgentHQScene.tsx`
-- `hermes-3d/src/features/agent-hq/BrainCenterHub.tsx`
-- `hermes-3d/src/features/agent-hq/DataStreamParticles.tsx`
-- `hermes-3d/src/features/agent-hq/DepartmentRoom.tsx`
-- `hermes-3d/src/features/agent-hq/types.ts`
-- `hermes-3d/src/features/office/renderMode.ts`
-- `hermes-3d/src/features/office/screens/OfficeScreen.tsx`
+- `harmage/kanban_sync_bridge.py`
 - `harmage/bridge_engine.py`
-- `harmage/mcp_bridge.py`
-- `harmage/server.py`
+- `docs/KANBAN_SYNC_BRIDGE.md`
 - `TASK_STATE.md`
 - `PROJECT_MEMORY.md`
 
 ## Next Action
-1. Buka browser ke `http://localhost:3000/office` atau `http://127.0.0.1:5173` untuk menikmati tampilan visual 3D Isometric "Agent HQ" yang baru!
-2. Kirim perintah tugas berikutnya dari Telegram kapan pun dibutuhkan. Antigravity akan otomatis mengeksekusi dan mengirimkan kartu laporan selesai secara instan.
+1. Buka browser ke `http://127.0.0.1:9119/kanban?profile=default` untuk melihat 19 task Harmage yang kini tersinkronisasi live di board Kanban Hermes.
+2. Semua branch divisi Git (`division/coding-engineering`, `division/content-creator-affiliate`, dsb.) sudah tersedia dan tersinkronisasi di remote GitHub origin.
