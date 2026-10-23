@@ -152,18 +152,12 @@ def get_overview() -> Dict[str, Any]:
 
 
 NPC_ASSIGNEE_MAP = {
-    "executive_manager": ["executive_manager", "alex_vance"],
-    "treasurer": ["treasurer", "marcus_drake"],
-    "executive_secretary": ["executive_secretary", "secretary", "sophia_chen"],
-    "creator_pm": ["creator_pm", "diana_prince", "diana_pm"],
-    "yt_shorts_specialist": ["yt_shorts_specialist", "leo_sparks", "video_editor", "leo_editor"],
-    "yt_long_specialist": ["yt_long_specialist", "raka_pratama", "editor_longform"],
-    "tiktok_specialist": ["tiktok_specialist", "maya_lin", "scriptwriter", "maya_script"],
-    "tiktok_affiliate": ["tiktok_affiliate", "victor_sterling"],
-    "quality_assurance": ["quality_assurance", "zackary_cross", "qa_sentinel"],
-    "content_researcher": ["content_researcher", "ethan_cole", "researcher"],
-    "quant_specialist": ["quant_specialist", "nova_vance"],
-    "security_specialist": ["security_specialist", "kage_kuro"],
+    "pic_lead": ["pic_lead", "david_kim", "tech_lead", "pic", "security_specialist", "kage_kuro"],
+    "frontend_dev": ["frontend_dev", "maya_lin", "fe_developer", "frontend", "tiktok_specialist", "scriptwriter"],
+    "backend_dev": ["backend_dev", "alex_vance", "be_developer", "backend", "executive_manager", "treasurer", "quant_specialist"],
+    "qa_engineer": ["qa_engineer", "sarah_jenkins", "quality_assurance", "qa", "zackary_cross", "qa_sentinel"],
+    "uiux_designer": ["uiux_designer", "chloe_bennett", "ui_ux", "designer", "creator_pm", "executive_secretary", "sophia_chen"],
+    "antigravity_engineer": ["antigravity_engineer", "antigravity"],
 }
 
 
@@ -567,6 +561,33 @@ def trigger_daily_standup() -> Dict[str, Any]:
 
 
 # --- Shared Token Budget Endpoints ---
+
+# --- Hermes Core Integration Endpoints (Sync Foto 1 -> Foto 2) ---
+
+@app.get("/api/hermes/sessions")
+def get_hermes_sessions(limit: int = 30):
+    from harmage.hermes_integration import hermes_integration
+    return hermes_integration.list_sessions(limit=limit)
+
+
+@app.get("/api/hermes/sessions/{session_id}/messages")
+def get_hermes_session_messages(session_id: str, limit: int = 50):
+    from harmage.hermes_integration import hermes_integration
+    return hermes_integration.get_session_messages(session_id=session_id, limit=limit)
+
+
+@app.get("/api/hermes/status")
+def get_hermes_status():
+    from harmage.hermes_integration import hermes_integration
+    return hermes_integration.get_status()
+
+
+@app.get("/api/tokens/realtime")
+def get_realtime_tokens():
+    """Retrieve verified multi-provider real-time token pool (xKiro + Gemini)."""
+    from harmage.realtime_tokens import token_tracker
+    return token_tracker.get_token_overview()
+
 
 @app.get("/api/budget/status")
 def get_budget_status() -> Dict[str, Any]:

@@ -14,6 +14,9 @@ import { IntegrationsView } from './views/IntegrationsView';
 import { ActivityView } from './views/ActivityView';
 import { ApprovalsView } from './views/ApprovalsView';
 import { SettingsView } from './views/SettingsView';
+import { HermesCoreView } from './views/HermesCoreView';
+import { VideoStudioView } from './views/VideoStudioView';
+import { VirtualOfficeView } from './views/VirtualOfficeView';
 
 import { AgentDetailModal } from './components/AgentDetailModal';
 import { NewTaskModal } from './components/NewTaskModal';
@@ -191,6 +194,18 @@ export const App: React.FC = () => {
 
           {activeSection === 'divisions' && (
             <DivisionsView />
+          )}
+
+          {activeSection === 'hermes_core' && (
+            <HermesCoreView />
+          )}
+
+          {activeSection === 'video_studio' && (
+            <VideoStudioView />
+          )}
+
+          {activeSection === 'virtual_office' && (
+            <VirtualOfficeView />
           )}
 
           {activeSection === 'tasks' && (

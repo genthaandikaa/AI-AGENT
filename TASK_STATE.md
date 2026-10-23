@@ -152,13 +152,47 @@ Setup Harmage Antigravity Improvement Pack, integrasikan Hermes3D office NPC aga
     - Terverifikasi live via Playwright: 19 task Harmage tampil 100% pada `http://127.0.0.1:9119/kanban?profile=default`.
     - Notifikasi selesai terkirim instan ke Telegram via `@weelsz_bot`.
 
+23. **Unified Single-Port Dashboard (:5173), Full Programmer Division & Real-Time Token Pool:**
+    - **Fokus Divisi Programmer:** Mengeliminasi divisi-divisi lama dan menyatukan seluruh organisasi menjadi **Full Divisi Programmer** dengan 5 role:
+      * `David Kim` (PIC & Lead Software Architect)
+      * `Maya Lin` (Senior Frontend Engineer - React/TypeScript/Tailwind)
+      * `Alex Vance` (Senior Backend & Systems Engineer - FastAPI/Python/SQLite)
+      * `Sarah Jenkins` (QA Sentinel & Test Automation Engineer - Playwright/E2E)
+      * `Chloe Bennett` (UI/UX & Product Design Specialist - Design Systems)
+    - **Auto-Detect Real Token Pool (xKiro + Gemini):**
+      * Menghapus limit statis 2.0M dan mengimplementasikan `harmage/realtime_tokens.py` + endpoint `/api/tokens/realtime`.
+      * Mendeteksi saldo riil xKiro: 46.6M MiniMax Welcome Drop, 8.7M Token Bonus Cadangan, 1.0M Qwen Free Daily Tier, dan 26.3M 30-day usage (409 reqs, $0.00 zero-cost). Total pool tersedia: 56.3M+ tokens.
+    - **Sinkronisasi Hermes Native (:9119) ke Dashboard (:5173):**
+      * Membangun `harmage/hermes_integration.py` (`/api/hermes/sessions`, `/api/hermes/sessions/{id}/messages`).
+      * Membuat `HermesCoreView.tsx` di Dashboard 5173 yang menampilkan seluruh 22 riwayat sesi chat dari Foto 1, message reader, dan opsi beralih ke native frame.
+    - **Penyatuan Multi-Port ke Port 5173:**
+      * Menyatukan Cheat Clip PRO (:8000) lewat menu `Video Studio` (`VideoStudioView.tsx`).
+      * Menyatukan Hermes3D (:3000) lewat menu `3D Office` (`VirtualOfficeView.tsx`).
+      * Reverse proxy di `vite.config.ts`: user hanya perlu membuka 1 URL: `http://localhost:5173`.
+    - **100% Lolos Playwright End-to-End:** Seluruh alur diuji via browser automation dengan 0 page error.
+
 ## Changed Files
-- `harmage/kanban_sync_bridge.py`
-- `harmage/bridge_engine.py`
-- `docs/KANBAN_SYNC_BRIDGE.md`
+- `frontend/src/App.tsx`
+- `frontend/src/components/Sidebar.tsx`
+- `frontend/src/components/TokenBudgetWidget.tsx`
+- `frontend/src/components/TopHeader.tsx`
+- `frontend/src/types.ts`
+- `frontend/src/views/DivisionsView.tsx`
+- `frontend/src/views/HermesCoreView.tsx`
+- `frontend/src/views/VideoStudioView.tsx`
+- `frontend/src/views/VirtualOfficeView.tsx`
+- `frontend/vite.config.ts`
+- `harmage/hermes_integration.py`
+- `harmage/realtime_tokens.py`
+- `harmage/npc.py`
+- `harmage/server.py`
 - `TASK_STATE.md`
 - `PROJECT_MEMORY.md`
 
 ## Next Action
-1. Buka browser ke `http://127.0.0.1:9119/kanban?profile=default` untuk melihat 19 task Harmage yang kini tersinkronisasi live di board Kanban Hermes.
-2. Semua branch divisi Git (`division/coding-engineering`, `division/content-creator-affiliate`, dsb.) sudah tersedia dan tersinkronisasi di remote GitHub origin.
+1. Buka browser ke `http://localhost:5173` (cukup 1 port ini) untuk menikmati Dashboard Terpadu:
+   - Menu **Dashboard**: Token pool riil 56.3M (xKiro 46.6M Event + 8.7M Bonus + 1.0M Free Tier).
+   - Menu **Hermes Core**: Kontrol penuh sesi chat Hermes dari Foto 1 langsung di dalam Dashboard 5173.
+   - Menu **3D Office**: Kantor virtual 3D Hermes3D di dalam Dashboard 5173.
+   - Menu **Programmer Squad**: Roster 5 developer (PIC, FE, BE, QA, UI/UX).
+   - Menu **Video Studio**: Cheat Clip PRO di dalam Dashboard 5173.

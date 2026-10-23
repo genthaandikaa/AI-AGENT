@@ -9,7 +9,10 @@ export type NavSection =
   | 'integrations' 
   | 'activity' 
   | 'approvals' 
-  | 'settings';
+  | 'settings'
+  | 'hermes_core'
+  | 'video_studio'
+  | 'virtual_office';
 
 export interface Agent {
   id: string;

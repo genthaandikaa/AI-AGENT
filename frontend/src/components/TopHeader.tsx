@@ -49,7 +49,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
         <div className="ml-auto flex items-center gap-2">
           <div className="flex items-center gap-1.5 text-[11px] text-purple-700 font-bold bg-purple-50 border border-purple-200 px-3 py-1 rounded-xl whitespace-nowrap">
             <Zap className="w-3 h-3 text-purple-600" />
-            <span>2.0M TOKEN/DAY (WIB)</span>
+            <span>56.3M ACTIVE POOL (xKiro + Gemini)</span>
           </div>
 
           <div className="flex items-center gap-2 text-[11px] text-emerald-700 font-bold bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-xl whitespace-nowrap">

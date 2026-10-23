@@ -13,7 +13,10 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
-  Bot
+  Bot,
+  Terminal,
+  Film,
+  Building2
 } from 'lucide-react';
 import { NavSection } from '../types';
 
@@ -50,14 +53,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
       title: 'UTAMA',
       items: [
         { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+        { id: 'hermes_core', label: 'Hermes Core', icon: Terminal },
+        { id: 'virtual_office', label: '3D Office', icon: Building2 },
+        { id: 'divisions', label: 'Programmer Squad', icon: GitMerge },
         { id: 'overview', label: 'Overview', icon: Layers },
-        { id: 'divisions', label: 'Divisions', icon: GitMerge },
       ]
     },
     {
       title: 'OPERASIONAL',
       items: [
         { id: 'tasks', label: 'Tasks & Projects', icon: CheckSquare },
+        { id: 'video_studio', label: 'Video Studio', icon: Film },
         { id: 'schedule', label: 'Schedule', icon: Calendar },
         { id: 'meetings', label: 'Meetings', icon: Users },
         { id: 'reports', label: 'Reports', icon: FileText },
