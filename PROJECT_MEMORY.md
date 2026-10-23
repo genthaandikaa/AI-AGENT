@@ -12,9 +12,11 @@
   - **Video Clipper:** Cheat Clip PRO & local FFmpeg (`E:\cheat-clip-pro` & `harmage/creator/clipper_bridge.py`)
 - **Port Allocations:**
   - `5173`: React Vite Frontend Dashboard
+  - `9119`: Hermes Agent Web Dashboard (CLI config, sessions, API keys)
   - `9200`: Harmage FastAPI Backend Server
   - `3000`: Hermes3D Virtual Office
   - `18789`: WebSocket Gateway Adapter
+  - `8000`: Cheat Clip PRO Video Clipper UI & API
 - **Last Verified Date:** 21 Oktober 2026 (WIB)
 
 ---

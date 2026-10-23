@@ -95,19 +95,23 @@ Setup Harmage Antigravity Improvement Pack, integrasikan Hermes3D office NPC aga
     - Menangani arsitektur reasoning/thinking dari MiniMax M3.1 Flash (memastikan alokasi token cukup dan fallback ke `reasoning_content` jika output kosong).
     - Memutakhirkan `C:\Users\genn\AppData\Local\hermes\config.yaml` dan `.env` dengan key baru serta memasukkan `minimax/minimax-m3.1-flash` sebagai fallback provider teratas untuk Telegram & Hermes CLI.
     - Mengonfirmasi seluruh 4 layanan enterprise aktif (`9200`, `3000`, `5173`, `18789`) dengan 10/10 agen bekerja di mejanya.
+17. **Hermes Agent Web Dashboard (Port 9119) & Division Git Branch Architecture:**
+    - Mengaktifkan **Hermes Agent Web Dashboard** resmi pada port `9119` (`http://127.0.0.1:9119`) untuk manajemen konfigurasi Hermes CLI, sesi obrolan aktif, dan API keys.
+    - Mengaktifkan backend Cheat Clip PRO pada port `8000` (`http://127.0.0.1:8000`) untuk kliping video lokal.
+    - Membuat dan mem-push 6 branch Git per-divisi ke remote GitHub `origin` (`https://github.com/genthaandikaa/AI-AGENT.git`):
+      1. `division/content-creator-affiliate`
+      2. `division/coding-engineering`
+      3. `division/video-longform`
+      4. `division/treasury-token-budget`
+      5. `division/executive-operations`
+      6. `division/qa-sentinel`
 
 ## Changed Files
-- `harmage/npc_brain.py`
-- `harmage/llm_brain.py`
-- `harmage/server.py`
-- `hermes-3d/server/demo-gateway-adapter.js`
-- `harmage/tests/test_npc_brain_dynamic.py`
-- `harmage/tests/verify_live_api.py`
-- `harmage/tests/verify_office_complex_ai.py`
 - `PROJECT_MEMORY.md`
 - `TASK_STATE.md`
 
 ## Next Action
-1. Buka http://localhost:3000/office di browser untuk melihat kantor virtual dengan status `HERMES • CONNECTED` dan 10 agen aktif bekerja.
-2. Manfaatkan kapasitas 50M token MiniMax event untuk tugas berat pembuatan konten dan dialog AI interaktif.
-3. Pantau token metrics dan operasional di http://127.0.0.1:5173.
+1. Buka Hermes Agent Web Dashboard di http://127.0.0.1:9119 untuk memantau sesi dan pengaturan Hermes CLI.
+2. Buka Harmage Operations Dashboard di http://127.0.0.1:5173 untuk memantau token budget dan divisi.
+3. Buka Hermes3D Virtual Office di http://localhost:3000/office untuk melihat seluruh agen bekerja di meja masing-masing.
+4. Gunakan `git checkout division/content-creator-affiliate` atau `git checkout division/coding-engineering` saat ingin fokus pada divisi tertentu.
