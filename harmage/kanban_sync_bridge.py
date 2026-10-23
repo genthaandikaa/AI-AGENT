@@ -172,13 +172,12 @@ class KanbanSyncBridge:
             "harmage_total": 0,
             "created_in_kanban": 0,
             "updated_in_kanban": 0,
+            "deleted_in_kanban": 0,
             "pushed_to_harmage": 0
         }
 
         harmage_tasks = self.fetch_harmage_tasks()
         stats["harmage_total"] = len(harmage_tasks)
-        if not harmage_tasks:
-            return stats
 
         now_ts = int(time.time())
         conn = self._get_kanban_connection()
@@ -190,6 +189,16 @@ class KanbanSyncBridge:
                 key = row["idempotency_key"]
                 if key:
                     existing_kanban_tasks[key] = dict(row)
+
+            # Prune tasks that no longer exist in Harmage
+            harmage_task_ids = {t["id"] for t in harmage_tasks if t.get("id")}
+            for k_key, k_val in existing_kanban_tasks.items():
+                if k_key not in harmage_task_ids:
+                    conn.execute("DELETE FROM tasks WHERE id = ?", (k_val["id"],))
+                    conn.execute("DELETE FROM task_events WHERE task_id = ?", (k_val["id"],))
+                    conn.execute("DELETE FROM task_comments WHERE task_id = ?", (k_val["id"],))
+                    conn.execute("DELETE FROM task_runs WHERE task_id = ?", (k_val["id"],))
+                    stats["deleted_in_kanban"] += 1
 
             for h_task in harmage_tasks:
                 task_id = h_task.get("id")
