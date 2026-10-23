@@ -135,22 +135,31 @@ Setup Harmage Antigravity Improvement Pack, integrasikan Hermes3D office NPC aga
     - Menambahkan tool native baru pada MCP server [harmage/mcp_bridge.py](file:///e:/AI%20Agent/harmage/mcp_bridge.py): `complete_antigravity_task(task_id, result_summary)`.
     - Teruji live: Ketika Antigravity menyelesaikan tugas `TSK-AGY-0F8B9D` (Hardcode Audit & Elimination) dan `TSK-AGY-B75ABA` (System Health Check), bot Jarvis (`@weelsz_bot`) secara instan mengirimkan kartu laporan penyelesaian tugas ke Telegram (Message ID #210 & #211).
 
+21. **3D Isometric Agent HQ Engine Rebuild (`TSK-AGY-220712`):**
+    - Merekonstruksi tampilan kantor Hermes3D dari pixel-art 2D menjadi **3D Isometric "Agent HQ"** (Three.js & React Three Fiber) berbasis referensi visual pengguna:
+      - **Center Hub "THE BRAIN":** Platform konsentris dengan rotating neon cyan ring, hologram energy beam, dan live counter shared memories.
+      - **8 Ruangan Departemen Melingkar:** Research (Biru), Scripts & Coding (Kuning), Social (Pink), Creative (Ungu), Analytics (Teal), Trading & Shop (Merah), Dev & SysOps (Hijau), Executive & HQ (Oranye) dilengkapi meja, monitor menyala, glass partitions, dan avatar 3D agent low-poly dengan animasi mengetik aktif.
+      - **Data Stream Particles:** Jalur kabel laser dengan partikel energi bercahaya yang mengalir dari tiap departemen ke hub pusat The Brain.
+      - **HUD Overlay Lengkap:** Top bar ("Agent HQ", mode switcher 3D Agent HQ/2D Pixel/Retro 3D, tabs Office/Tasks/Calendar/Brain, search bar `/`, pill "12 agents · 10 running"), toast notifikasi analytics, dan minimap radar di pojok kanan bawah.
+    - Teruji 100% via Playwright headless Chrome: 0 fatal console error, 60 FPS, dan kartu penyelesaian tugas otomatis dipost ke Telegram (Message ID #224).
+    - Commit `32810a41` dipush ke remote GitHub main.
+
 ## Changed Files
+- `hermes-3d/src/features/agent-hq/AgentHQ3D.tsx`
+- `hermes-3d/src/features/agent-hq/AgentHQHud.tsx`
+- `hermes-3d/src/features/agent-hq/AgentHQScene.tsx`
+- `hermes-3d/src/features/agent-hq/BrainCenterHub.tsx`
+- `hermes-3d/src/features/agent-hq/DataStreamParticles.tsx`
+- `hermes-3d/src/features/agent-hq/DepartmentRoom.tsx`
+- `hermes-3d/src/features/agent-hq/types.ts`
+- `hermes-3d/src/features/office/renderMode.ts`
+- `hermes-3d/src/features/office/screens/OfficeScreen.tsx`
 - `harmage/bridge_engine.py`
 - `harmage/mcp_bridge.py`
 - `harmage/server.py`
-- `hermes-3d/server/demo-gateway-adapter.js`
-- `frontend/src/components/Hermes3DViewer.tsx`
-- `frontend/src/views/IntegrationsView.tsx`
-- `harmage/data/delegated_tasks.json`
-- `harmage/data/harmage_operations.db`
-- `C:\Users\genn\AppData\Local\hermes\config.yaml`
-- `C:\Users\genn\AppData\Local\hermes\SOUL.md`
-- `.agents/skills/harmage-antigravity-bridge/SKILL.md`
 - `TASK_STATE.md`
 - `PROJECT_MEMORY.md`
 
 ## Next Action
-1. Memberikan perintah tugas baru dari Telegram kapan saja.
-2. Membiarkan Antigravity menyelesaikan pekerjaan koding / fitur / audit di PC.
-3. Begitu selesai, Antigravity akan otomatis mengirimkan notifikasi kartu hasil penyelesaian ke Telegram melalui bot Hermes secara instan tanpa memakan kuota token.
+1. Buka browser ke `http://localhost:3000/office` atau `http://127.0.0.1:5173` untuk menikmati tampilan visual 3D Isometric "Agent HQ" yang baru!
+2. Kirim perintah tugas berikutnya dari Telegram kapan pun dibutuhkan. Antigravity akan otomatis mengeksekusi dan mengirimkan kartu laporan selesai secara instan.
