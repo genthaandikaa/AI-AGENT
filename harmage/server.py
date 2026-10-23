@@ -717,6 +717,59 @@ def get_npc_interaction_history(limit: int = 30) -> List[Dict[str, Any]]:
     return [dict(r) for r in rows]
 
 
+# --- Hermes-Antigravity Telegram Bridge Endpoints ---
+class BridgeDelegateRequest(BaseModel):
+    title: str
+    description: str = ""
+    division: str = "coding"
+    priority: str = "high"
+    requested_by: str = "Jarvis (Telegram)"
+
+
+class BridgeBranchRequest(BaseModel):
+    division: str
+
+
+@app.post("/api/bridge/delegate")
+def api_bridge_delegate(req: BridgeDelegateRequest):
+    """Delegate heavy task from Jarvis / Telegram to Antigravity."""
+    from harmage.bridge_engine import delegate_task
+    result = delegate_task(
+        title=req.title,
+        description=req.description,
+        division=req.division,
+        priority=req.priority,
+        requested_by=req.requested_by
+    )
+    return result
+
+
+@app.get("/api/bridge/tasks")
+def api_bridge_list_tasks(limit: int = 20):
+    """List recent tasks delegated across the bridge."""
+    from harmage.bridge_engine import list_delegated_tasks
+    return list_delegated_tasks(limit=limit)
+
+
+@app.get("/api/bridge/tasks/{task_id}")
+def api_bridge_get_task(task_id: str):
+    """Get status of a specific delegated task."""
+    from harmage.bridge_engine import get_task_status
+    return get_task_status(task_id=task_id)
+
+
+@app.get("/api/bridge/overview")
+def api_bridge_overview():
+    """Get system and server health overview."""
+    from harmage.bridge_engine import get_system_overview
+    return get_system_overview()
+
+
+@app.post("/api/bridge/branch")
+def api_bridge_switch_branch(req: BridgeBranchRequest):
+    """Switch workspace branch to target division."""
+    from harmage.bridge_engine import switch_division_branch
+    return switch_division_branch(division=req.division)
 
 
 # Mount Static Files
