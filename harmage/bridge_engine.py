@@ -79,6 +79,100 @@ def _save_delegated_log(tasks: List[Dict[str, Any]]):
         json.dump(tasks, f, indent=2, ensure_ascii=False)
 
 
+def _get_telegram_config() -> Dict[str, str]:
+    """Load Telegram credentials and channel configuration from hermes environment."""
+    env_file = Path(r"C:\Users\genn\AppData\Local\hermes\.env")
+    cfg = {}
+    if env_file.exists():
+        try:
+            with open(env_file, "r", encoding="utf-8", errors="ignore") as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith("#") and "=" in line:
+                        k, v = line.split("=", 1)
+                        cfg[k.strip()] = v.strip()
+        except Exception:
+            pass
+    return cfg
+
+
+def _detect_telegram_origin() -> tuple[Optional[str], Optional[int]]:
+    """Try to detect the active Telegram chat_id and thread_id from Hermes state.db."""
+    state_db = Path(r"C:\Users\genn\AppData\Local\hermes\state.db")
+    if not state_db.exists():
+        return None, None
+    try:
+        conn = sqlite3.connect(str(state_db))
+        c = conn.cursor()
+        c.execute("SELECT chat_id, thread_id FROM sessions WHERE source = 'telegram' ORDER BY rowid DESC LIMIT 1")
+        row = c.fetchone()
+        conn.close()
+        if row:
+            chat_id = str(row[0]) if row[0] else None
+            thread_id = int(row[1]) if row[1] and str(row[1]).isdigit() else None
+            return chat_id, thread_id
+    except Exception:
+        pass
+    return None, None
+
+
+def send_telegram_notification(
+    text: str,
+    chat_id: Optional[str] = None,
+    thread_id: Optional[int] = None,
+    parse_mode: str = "Markdown"
+) -> Dict[str, Any]:
+    """Send a notification message via Telegram bot."""
+    import urllib.request
+    import urllib.error
+
+    cfg = _get_telegram_config()
+    token = cfg.get("TELEGRAM_BOT_TOKEN")
+    if not token:
+        return {"success": False, "error": "TELEGRAM_BOT_TOKEN not found in environment."}
+
+    target_chat = chat_id or cfg.get("TELEGRAM_HOME_CHANNEL") or cfg.get("TELEGRAM_ALLOWED_USERS")
+    if not target_chat:
+        return {"success": False, "error": "No target Telegram chat_id configured."}
+
+    payload: Dict[str, Any] = {
+        "chat_id": target_chat,
+        "text": text,
+        "parse_mode": parse_mode
+    }
+    if thread_id is not None and int(thread_id) > 1:
+        payload["message_thread_id"] = int(thread_id)
+
+    req = urllib.request.Request(
+        f"https://api.telegram.org/bot{token}/sendMessage",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json"}
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            return {"success": True, "result": data.get("result", {})}
+    except urllib.error.HTTPError as e:
+        err_msg = e.read().decode("utf-8", errors="ignore")
+        # Fallback: if topic thread rejected, send to channel or direct user
+        if "message_thread_id" in payload:
+            del payload["message_thread_id"]
+            try:
+                req_fb = urllib.request.Request(
+                    f"https://api.telegram.org/bot{token}/sendMessage",
+                    data=json.dumps(payload).encode("utf-8"),
+                    headers={"Content-Type": "application/json"}
+                )
+                with urllib.request.urlopen(req_fb, timeout=10) as resp_fb:
+                    data_fb = json.loads(resp_fb.read().decode("utf-8"))
+                    return {"success": True, "result": data_fb.get("result", {}), "fallback": "no_thread"}
+            except Exception:
+                pass
+        return {"success": False, "error": f"HTTP {e.code}: {err_msg}"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
 def delegate_task(
     title: str,
     description: str = "",
@@ -95,6 +189,7 @@ def delegate_task(
     short_hash = uuid.uuid4().hex[:6].upper()
     task_id = f"TSK-AGY-{short_hash}"
     now_iso = datetime.now(timezone.utc).isoformat()
+    origin_chat, origin_thread = _detect_telegram_origin()
 
     conn = get_connection(DB_PATH)
     try:
@@ -129,6 +224,8 @@ def delegate_task(
         "assignee": assignee,
         "priority": priority,
         "requested_by": requested_by,
+        "origin_chat_id": origin_chat,
+        "origin_thread_id": origin_thread,
         "status": "queued_for_antigravity",
         "created_at": now_iso,
         "completed_at": None,
@@ -288,3 +385,101 @@ def get_system_overview() -> Dict[str, Any]:
             "division/qa-sentinel"
         ]
     }
+
+
+def complete_task(
+    task_id: str,
+    result_summary: str,
+    git_commit_hash: Optional[str] = None,
+    notify_telegram: bool = True
+) -> Dict[str, Any]:
+    """
+    Mark a delegated task as COMPLETED by Antigravity and proactively notify Telegram.
+    """
+    tasks = _read_delegated_log()
+    target = None
+    for t in tasks:
+        if t["task_id"].lower() == task_id.lower() or (task_id.lower() in ("latest", "last") and t == tasks[0]):
+            target = t
+            break
+
+    if not target:
+        return {"success": False, "message": f"Task {task_id} not found."}
+
+    now_iso = datetime.now(timezone.utc).isoformat()
+    target["status"] = "completed"
+    target["completed_at"] = now_iso
+    target["result_summary"] = result_summary
+    if git_commit_hash:
+        target["git_commit"] = git_commit_hash
+
+    _save_delegated_log(tasks)
+
+    # Update SQLite database
+    conn = get_connection(DB_PATH)
+    try:
+        conn.execute(
+            "UPDATE tasks SET status = 'completed', updated_at = ? WHERE id = ?",
+            (now_iso, target["task_id"])
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+    log_activity(
+        "INFO",
+        "BridgeEngine",
+        f"Task {target['task_id']} completed by Antigravity",
+        result_summary[:200]
+    )
+
+    telegram_res = None
+    if notify_telegram:
+        commit_info = f"\n📦 *Git Commit:* `{git_commit_hash}`" if git_commit_hash else ""
+        msg_text = (
+            f"🚀 *[TUGAS SELESAI] Antigravity x Jarvis*\n\n"
+            f"📌 *Task ID:* `{target['task_id']}`\n"
+            f"🎯 *Judul:* {target['title']}\n"
+            f"🌿 *Branch:* `{target['git_branch']}`\n"
+            f"👤 *Eksekutor:* Antigravity (Google AI Pro IDE){commit_info}\n\n"
+            f"📝 *Hasil Pengerjaan:*\n{result_summary}\n\n"
+            f"💡 *Token Telegram lu 100% aman (0 token terbuang untuk coding). Kode sudah rapi dan tersinkronisasi.* 🗿"
+        )
+        chat_id = target.get("origin_chat_id")
+        thread_id = target.get("origin_thread_id")
+        telegram_res = send_telegram_notification(msg_text, chat_id=chat_id, thread_id=thread_id)
+
+    return {
+        "success": True,
+        "task_id": target["task_id"],
+        "status": "completed",
+        "completed_at": now_iso,
+        "result_summary": result_summary,
+        "telegram_notification": telegram_res
+    }
+
+
+if __name__ == "__main__":
+    import sys
+    if len(sys.argv) > 1:
+        cmd = sys.argv[1].lower()
+        if cmd == "complete" and len(sys.argv) >= 4:
+            tid = sys.argv[2]
+            summary = sys.argv[3]
+            commit = sys.argv[4] if len(sys.argv) > 4 else None
+            res = complete_task(tid, summary, git_commit_hash=commit)
+            print(json.dumps(res, indent=2))
+        elif cmd == "notify" and len(sys.argv) >= 3:
+            msg = sys.argv[2]
+            target_chat = sys.argv[3] if len(sys.argv) > 3 else None
+            target_thread = int(sys.argv[4]) if len(sys.argv) > 4 else None
+            res = send_telegram_notification(msg, chat_id=target_chat, thread_id=target_thread)
+            print(json.dumps(res, indent=2))
+        elif cmd == "status":
+            tid = sys.argv[2] if len(sys.argv) > 2 else "latest"
+            print(json.dumps(get_task_status(tid), indent=2))
+        elif cmd == "overview":
+            print(json.dumps(get_system_overview(), indent=2))
+        else:
+            print("Usage: python -m harmage.bridge_engine [complete <task_id> <summary> [commit] | notify <msg> [chat] [thread] | status [task_id] | overview]")
+

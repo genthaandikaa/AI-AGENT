@@ -26,6 +26,8 @@ from harmage.bridge_engine import (
     list_delegated_tasks,
     switch_division_branch,
     get_system_overview,
+    complete_task,
+    send_telegram_notification,
 )
 
 server = Server("antigravity-bridge")
@@ -94,6 +96,24 @@ async def list_tools() -> list[types.Tool]:
             inputSchema={"type": "object", "properties": {}}
         ),
         types.Tool(
+            name="complete_antigravity_task",
+            description="Mark a delegated task as completed by Antigravity and proactively send completion notification to Telegram.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "task_id": {
+                        "type": "string",
+                        "description": "The Task ID to mark as completed (e.g. TSK-AGY-XXXXXX)."
+                    },
+                    "result_summary": {
+                        "type": "string",
+                        "description": "Summary of what was achieved/fixed/created."
+                    }
+                },
+                "required": ["task_id", "result_summary"]
+            }
+        ),
+        types.Tool(
             name="switch_division_branch",
             description="Switch the active Git branch to a specific Harmage division workspace.",
             inputSchema={
@@ -147,6 +167,12 @@ async def call_tool(name: str, arguments: dict | None) -> list[types.TextContent
         elif name == "get_harmage_system_overview":
             overview = get_system_overview()
             return [types.TextContent(type="text", text=json.dumps(overview, indent=2, ensure_ascii=False))]
+
+        elif name == "complete_antigravity_task":
+            task_id = args.get("task_id", "latest")
+            summary = args.get("result_summary", "Completed successfully.")
+            comp_res = complete_task(task_id, summary)
+            return [types.TextContent(type="text", text=json.dumps(comp_res, indent=2, ensure_ascii=False))]
 
         elif name == "switch_division_branch":
             division = args.get("division", "coding")

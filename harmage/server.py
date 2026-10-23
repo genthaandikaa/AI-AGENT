@@ -730,6 +730,19 @@ class BridgeBranchRequest(BaseModel):
     division: str
 
 
+class BridgeCompleteRequest(BaseModel):
+    task_id: str
+    result_summary: str
+    git_commit: Optional[str] = None
+    notify_telegram: bool = True
+
+
+class BridgeNotifyRequest(BaseModel):
+    message: str
+    chat_id: Optional[str] = None
+    thread_id: Optional[int] = None
+
+
 @app.post("/api/bridge/delegate")
 def api_bridge_delegate(req: BridgeDelegateRequest):
     """Delegate heavy task from Jarvis / Telegram to Antigravity."""
@@ -770,6 +783,29 @@ def api_bridge_switch_branch(req: BridgeBranchRequest):
     """Switch workspace branch to target division."""
     from harmage.bridge_engine import switch_division_branch
     return switch_division_branch(division=req.division)
+
+
+@app.post("/api/bridge/complete")
+def api_bridge_complete(req: BridgeCompleteRequest):
+    """Mark task complete and notify Telegram."""
+    from harmage.bridge_engine import complete_task
+    return complete_task(
+        task_id=req.task_id,
+        result_summary=req.result_summary,
+        git_commit_hash=req.git_commit,
+        notify_telegram=req.notify_telegram
+    )
+
+
+@app.post("/api/bridge/notify")
+def api_bridge_notify(req: BridgeNotifyRequest):
+    """Send notification message to Telegram."""
+    from harmage.bridge_engine import send_telegram_notification
+    return send_telegram_notification(
+        text=req.message,
+        chat_id=req.chat_id,
+        thread_id=req.thread_id
+    )
 
 
 # Mount Static Files

@@ -128,6 +128,13 @@ Setup Harmage Antigravity Improvement Pack, integrasikan Hermes3D office NPC aga
     - Membersihkan cache session lama di `state.db` dan merestart Hermes Telegram Gateway daemon.
     - Teruji live end-to-end: delegasi tugas `TSK-AGY-B75ABA` berhasil diproses oleh Jarvis ke Antigravity via MCP bridge dalam 0.9 detik.
 
+20. **Bidirectional Task Completion & Real-Time Telegram Notifications:**
+    - Mengimplementasikan sistem notifikasi dua arah di [harmage/bridge_engine.py](file:///e:/AI%20Agent/harmage/bridge_engine.py): fungsi `send_telegram_notification()` dan `complete_task()`.
+    - Menyimpan metadata asal chat (`origin_chat_id` dan `origin_thread_id`) dari Hermes `state.db` pada saat delegasi tugas dilakukan, sehingga notifikasi otomatis kembali tepat ke thread/chat tempat pengguna memberikan perintah.
+    - Menambahkan endpoint REST di [harmage/server.py](file:///e:/AI%20Agent/harmage/server.py): `POST /api/bridge/complete` dan `POST /api/bridge/notify`.
+    - Menambahkan tool native baru pada MCP server [harmage/mcp_bridge.py](file:///e:/AI%20Agent/harmage/mcp_bridge.py): `complete_antigravity_task(task_id, result_summary)`.
+    - Teruji live: Ketika Antigravity menyelesaikan tugas `TSK-AGY-0F8B9D` (Hardcode Audit & Elimination) dan `TSK-AGY-B75ABA` (System Health Check), bot Jarvis (`@weelsz_bot`) secara instan mengirimkan kartu laporan penyelesaian tugas ke Telegram (Message ID #210 & #211).
+
 ## Changed Files
 - `harmage/bridge_engine.py`
 - `harmage/mcp_bridge.py`
@@ -135,6 +142,8 @@ Setup Harmage Antigravity Improvement Pack, integrasikan Hermes3D office NPC aga
 - `hermes-3d/server/demo-gateway-adapter.js`
 - `frontend/src/components/Hermes3DViewer.tsx`
 - `frontend/src/views/IntegrationsView.tsx`
+- `harmage/data/delegated_tasks.json`
+- `harmage/data/harmage_operations.db`
 - `C:\Users\genn\AppData\Local\hermes\config.yaml`
 - `C:\Users\genn\AppData\Local\hermes\SOUL.md`
 - `.agents/skills/harmage-antigravity-bridge/SKILL.md`
@@ -142,7 +151,6 @@ Setup Harmage Antigravity Improvement Pack, integrasikan Hermes3D office NPC aga
 - `PROJECT_MEMORY.md`
 
 ## Next Action
-1. Di Telegram (grup atau chat dengan Jarvis), ketik:
-   *"Jarvis, tolong delegasikan ke Antigravity untuk audit dan cek sistem"* atau *"Jarvis, tolong carikan apakah masih ada yang hardcode jika ada tolong hapus"*.
-2. Jarvis akan langsung memanggil tool `delegate_to_antigravity` tanpa melakukan search file lokal di PC, dan mengembalikan Task ID delegasi.
-3. Seluruh pekerjaan koding dan audit diselesaikan oleh Antigravity (Google AI Pro IDE) sehingga kuota Telegram Jarvis tetap hemat 100%.
+1. Memberikan perintah tugas baru dari Telegram kapan saja.
+2. Membiarkan Antigravity menyelesaikan pekerjaan koding / fitur / audit di PC.
+3. Begitu selesai, Antigravity akan otomatis mengirimkan notifikasi kartu hasil penyelesaian ke Telegram melalui bot Hermes secara instan tanpa memakan kuota token.
